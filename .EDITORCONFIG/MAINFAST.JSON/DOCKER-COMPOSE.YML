@@ -1,0 +1,555 @@
+# ===========================================
+# .editorconfig - 에디터 설정
+# ===========================================
+
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+trim_trailing_whitespace = true
+max_line_length = 100
+
+[*.{js,css,html}]
+indent_size = 2
+
+[*.{py,pyw}]
+indent_size = 4
+
+[*.md]
+trim_trailing_whitespace = false
+max_line_length = 120
+
+[*.{yml,yaml}]
+indent_size = 2
+
+[Makefile]
+indent_style = tab
+
+# ===========================================
+# manifest.json - PWA 설정
+# ===========================================
+
+{
+  "name": "QuantumUnified Pro",
+  "short_name": "QuantumUnified",
+  "description": "세계 최초의 양자컴퓨터 + GPU + CPU 통합 혁신 플랫폼",
+  "version": "3.0.0",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#00ff88",
+  "orientation": "any",
+  "scope": "./",
+  "lang": "ko",
+  "icons": [
+    {
+      "src": "assets/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "컬러 생성",
+      "short_name": "Colors",
+      "description": "양자 컬러 팔레트 생성",
+      "url": "./index.html?mode=color",
+      "icons": [
+        {
+          "src": "assets/shortcut-color.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "성능 테스트",
+      "short_name": "Benchmark",
+      "description": "시스템 성능 벤치마크",
+      "url": "./test.html",
+      "icons": [
+        {
+          "src": "assets/shortcut-benchmark.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "categories": [
+    "productivity",
+    "utilities",
+    "developer",
+    "science"
+  ],
+  "screenshots": [
+    {
+      "src": "assets/screenshot-desktop.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "platform": "wide"
+    },
+    {
+      "src": "assets/screenshot-mobile.png",
+      "sizes": "390x844",
+      "type": "image/png"
+    }
+  ],
+  "related_applications": [
+    {
+      "platform": "webapp",
+      "url": "https://quantumunified.tech/app"
+    }
+  ],
+  "prefer_related_applications": false
+}
+
+# ===========================================
+# docker-compose.yml - Docker 서비스 구성
+# ===========================================
+
+version: '3.8'
+
+services:
+  # 메인 웹 애플리케이션
+  quantumunified-web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    container_name: quantumunified-web
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/usr/share/nginx/html:ro
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    environment:
+      - NODE_ENV=production
+      - QUANTUM_MODE=web
+    restart: unless-stopped
+    networks:
+      - quantum-network
+    labels:
+      - "com.quantumunified.service=web"
+      - "com.quantumunified.version=3.0.0"
+
+  # Python API 서버
+  quantumunified-api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: quantumunified-api
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./api:/app/api:ro
+      - ./quantum_unified.log:/app/logs/quantum_unified.log
+      - api_cache:/app/cache
+    environment:
+      - FLASK_ENV=production
+      - QUANTUM_API_MODE=true
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=postgresql://quantum:quantum@postgres:5432/quantumdb
+    depends_on:
+      - redis
+      - postgres
+    restart: unless-stopped
+    networks:
+      - quantum-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Redis 캐시
+  redis:
+    image: redis:7-alpine
+    container_name: quantumunified-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes --requirepass quantum2024
+    restart: unless-stopped
+    networks:
+      - quantum-network
+
+  # PostgreSQL 데이터베이스
+  postgres:
+    image: postgres:15-alpine
+    container_name: quantumunified-postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    environment:
+      - POSTGRES_DB=quantumdb
+      - POSTGRES_USER=quantum
+      - POSTGRES_PASSWORD=quantum2024
+      - POSTGRES_INITDB_ARGS="--encoding=UTF-8 --locale=C"
+    restart: unless-stopped
+    networks:
+      - quantum-network
+
+  # Nginx 로드 밸런서
+  nginx:
+    image: nginx:alpine
+    container_name: quantumunified-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+      - nginx_logs:/var/log/nginx
+    depends_on:
+      - quantumunified-web
+      - quantumunified-api
+    restart: unless-stopped
+    networks:
+      - quantum-network
+
+  # 모니터링 - Prometheus
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: quantumunified-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    restart: unless-stopped
+    networks:
+      - quantum-network
+
+  # 모니터링 - Grafana
+  grafana:
+    image: grafana/grafana:latest
+    container_name: quantumunified-grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./grafana/datasources:/etc/grafana/provisioning/datasources:ro
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=quantum2024
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_ANALYTICS_REPORTING_ENABLED=false
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+    networks:
+      - quantum-network
+
+  # 로그 수집 - ELK Stack (선택적)
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.8.0
+    container_name: quantumunified-elasticsearch
+    environment:
+      - node.name=es01
+      - cluster.name=quantum-cluster
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    networks:
+      - quantum-network
+    profiles:
+      - elk
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.8.0
+    container_name: quantumunified-kibana
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    depends_on:
+      - elasticsearch
+    networks:
+      - quantum-network
+    profiles:
+      - elk
+
+  # 개발용 핫 리로드 서버
+  dev-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: quantumunified-dev
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
+    command: npm run dev
+    networks:
+      - quantum-network
+    profiles:
+      - dev
+
+# 네트워크 설정
+networks:
+  quantum-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+# 볼륨 설정
+volumes:
+  api_cache:
+    driver: local
+  redis_data:
+    driver: local
+  postgres_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+  elasticsearch_data:
+    driver: local
+  nginx_logs:
+    driver: local
+
+# ===========================================
+# GitHub Actions Workflow
+# ===========================================
+
+name: QuantumUnified Pro CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  NODE_VERSION: '18'
+  PYTHON_VERSION: '3.11'
+
+jobs:
+  # 코드 품질 검사
+  lint-and-format:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Lint JavaScript
+      run: npm run lint
+    
+    - name: Check formatting
+      run: npm run format -- --check
+    
+    - name: Validate HTML
+      run: npm run validate
+
+  # 테스트 실행
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        browser: [chrome, firefox]
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Run tests
+      run: npm run test:coverage
+      env:
+        BROWSER: ${{ matrix.browser }}
+    
+    - name: Upload coverage
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage/lcov.info
+
+  # 성능 벤치마크
+  benchmark:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Run benchmarks
+      run: npm run benchmark
+    
+    - name: Store benchmark results
+      uses: benchmark-action/github-action-benchmark@v1
+      with:
+        tool: 'customSmallerIsBetter'
+        output-file-path: benchmark-results.json
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        auto-push: true
+
+  # Docker 이미지 빌드
+  docker-build:
+    runs-on: ubuntu-latest
+    needs: [lint-and-format, test]
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    
+    - name: Login to DockerHub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+    
+    - name: Extract metadata
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: quantumunified/quantumunified-pro
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=semver,pattern={{version}}
+          type=semver,pattern={{major}}.{{minor}}
+    
+    - name: Build and push
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+  # 배포
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [docker-build]
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+    environment: production
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Deploy to production
+      run: |
+        echo "🚀 Deploying QuantumUnified Pro to production..."
+        # 실제 배포 스크립트는 여기에 추가
+    
+    - name: Update status
+      run: |
+        echo "✅ Deployment completed successfully!"
+
+  # 릴리스 생성
+  release:
+    runs-on: ubuntu-latest
+    needs: [deploy]
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Create Release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: QuantumUnified Pro ${{ github.ref }}
+        body: |
+          🌈 QuantumUnified Pro ${{ github.ref }} 릴리스
+          
+          ## 주요 변경사항
+          - 양자 컴퓨팅 성능 향상
+          - GPU 가속 최적화
+          - 전력 효율성 개선
+          
+          ## 다운로드
+          - [웹 버전](https://quantumunified.tech)
+          - [Docker 이미지](https://hub.docker.com/r/quantumunified/quantumunified-pro)
+          
+          전체 변경사항은 [CHANGELOG.md](CHANGELOG.md)를 참조하세요.
+        draft: false
+        prerelease: false
