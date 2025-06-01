@@ -1,0 +1,1155 @@
+/* QuantumUnified Pro v3.0 - 혁신적 스타일시트 */
+
+/* ========== 기본 설정 ========== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    /* 양자 컬러 팔레트 */
+    --quantum-primary: #00ff88;
+    --quantum-secondary: #00d4ff;
+    --quantum-accent: #ff6ec7;
+    --quantum-warning: #ffaa00;
+    --quantum-success: #00ff88;
+    --quantum-error: #ff4757;
+    
+    /* 배경 컬러 */
+    --bg-primary: #0a0a0a;
+    --bg-secondary: #1a1a1a;
+    --bg-tertiary: #2a2a2a;
+    --bg-card: rgba(26, 26, 26, 0.9);
+    
+    /* 텍스트 컬러 */
+    --text-primary: #ffffff;
+    --text-secondary: #cccccc;
+    --text-muted: #888888;
+    
+    /* 글로우 효과 */
+    --glow-quantum: 0 0 20px var(--quantum-primary);
+    --glow-gpu: 0 0 20px var(--quantum-secondary);
+    --glow-accent: 0 0 20px var(--quantum-accent);
+    
+    /* 폰트 */
+    --font-primary: 'Orbitron', monospace;
+    --font-secondary: 'Rajdhani', sans-serif;
+    
+    /* 애니메이션 */
+    --transition-fast: 0.2s ease;
+    --transition-normal: 0.3s ease;
+    --transition-slow: 0.5s ease;
+}
+
+/* ========== 글로벌 스타일 ========== */
+body {
+    font-family: var(--font-secondary);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+
+/* ========== 배경 애니메이션 ========== */
+.quantum-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background: linear-gradient(45deg, 
+        var(--bg-primary) 0%, 
+        #0d1421 25%, 
+        #1a0d21 50%, 
+        #0d1421 75%, 
+        var(--bg-primary) 100%);
+    animation: backgroundShift 10s ease-in-out infinite;
+}
+
+@keyframes backgroundShift {
+    0%, 100% { filter: hue-rotate(0deg); }
+    50% { filter: hue-rotate(30deg); }
+}
+
+.quantum-particles {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(circle at 20% 20%, rgba(0, 255, 136, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 60%, rgba(255, 110, 199, 0.1) 0%, transparent 50%);
+    animation: particleFloat 8s ease-in-out infinite;
+}
+
+@keyframes particleFloat {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    33% { transform: translateY(-20px) rotate(120deg); }
+    66% { transform: translateY(10px) rotate(240deg); }
+}
+
+#quantumCanvas {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0.3;
+}
+
+/* ========== 메인 컨테이너 ========== */
+.main-container {
+    position: relative;
+    z-index: 1;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* ========== 헤더 ========== */
+.header {
+    background: var(--bg-card);
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(0, 255, 136, 0.2);
+    box-shadow: var(--glow-quantum);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.quantum-logo {
+    font-size: 4rem;
+    animation: quantumSpin 3s linear infinite;
+}
+
+@keyframes quantumSpin {
+    0% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(180deg) scale(1.1); }
+    100% { transform: rotate(360deg) scale(1); }
+}
+
+.title-group {
+    text-align: left;
+}
+
+.main-title {
+    font-family: var(--font-primary);
+    font-size: 2.5rem;
+    font-weight: 900;
+    background: linear-gradient(45deg, var(--quantum-primary), var(--quantum-secondary));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 5px;
+    text-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
+}
+
+.version {
+    font-size: 0.9rem;
+    color: var(--quantum-accent);
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    font-weight: 300;
+}
+
+/* ========== 상태 인디케이터 ========== */
+.status-indicators {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 10px 15px;
+    border-radius: 25px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all var(--transition-normal);
+}
+
+.indicator:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+.quantum-status {
+    border-color: var(--quantum-primary);
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+}
+
+.gpu-status {
+    border-color: var(--quantum-secondary);
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+}
+
+.eco-status {
+    border-color: var(--quantum-success);
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+}
+
+.indicator-icon {
+    font-size: 1.2rem;
+}
+
+.indicator-text {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* ========== 섹션 공통 스타일 ========== */
+section {
+    background: var(--bg-card);
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all var(--transition-normal);
+}
+
+section:hover {
+    border-color: rgba(0, 255, 136, 0.3);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.section-title {
+    font-family: var(--font-primary);
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 25px;
+    color: var(--quantum-primary);
+    text-shadow: var(--glow-quantum);
+}
+
+/* ========== 시스템 상태 그리드 ========== */
+.status-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.status-card {
+    background: linear-gradient(135deg, rgba(26, 26, 26, 0.8), rgba(42, 42, 42, 0.6));
+    border-radius: 15px;
+    padding: 25px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+}
+
+.status-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(from 0deg, transparent, rgba(0, 255, 136, 0.1), transparent);
+    animation: cardRotate 10s linear infinite;
+    opacity: 0;
+    transition: opacity var(--transition-normal);
+}
+
+.status-card:hover::before {
+    opacity: 1;
+}
+
+@keyframes cardRotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.status-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--quantum-primary);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+}
+
+.quantum-card:hover {
+    border-color: var(--quantum-primary);
+    box-shadow: var(--glow-quantum);
+}
+
+.gpu-card:hover {
+    border-color: var(--quantum-secondary);
+    box-shadow: var(--glow-gpu);
+}
+
+.cpu-card:hover {
+    border-color: var(--quantum-warning);
+    box-shadow: 0 0 20px var(--quantum-warning);
+}
+
+.power-card:hover {
+    border-color: var(--quantum-success);
+    box-shadow: 0 0 20px var(--quantum-success);
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.card-icon {
+    font-size: 1.5rem;
+}
+
+.card-title {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.card-content {
+    position: relative;
+    z-index: 1;
+}
+
+.metric {
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+    margin-bottom: 15px;
+}
+
+.metric-value {
+    font-family: var(--font-primary);
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--quantum-primary);
+}
+
+.metric-unit {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.metric-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 15px;
+}
+
+.metric-progress {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 1s ease;
+    position: relative;
+}
+
+.quantum-progress {
+    background: linear-gradient(90deg, var(--quantum-primary), var(--quantum-secondary));
+    box-shadow: 0 0 10px var(--quantum-primary);
+}
+
+.gpu-progress {
+    background: linear-gradient(90deg, var(--quantum-secondary), var(--quantum-accent));
+    box-shadow: 0 0 10px var(--quantum-secondary);
+}
+
+.cpu-progress {
+    background: linear-gradient(90deg, var(--quantum-warning), var(--quantum-accent));
+    box-shadow: 0 0 10px var(--quantum-warning);
+}
+
+.power-progress {
+    background: linear-gradient(90deg, var(--quantum-success), var(--quantum-primary));
+    box-shadow: 0 0 10px var(--quantum-success);
+}
+
+.metric-progress::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: progressShine 2s ease-in-out infinite;
+}
+
+@keyframes progressShine {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+.card-status {
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 20px;
+    display: inline-block;
+}
+
+.card-status.active {
+    background: rgba(0, 255, 136, 0.2);
+    color: var(--quantum-success);
+    border: 1px solid var(--quantum-success);
+}
+
+.card-status.eco {
+    background: rgba(0, 255, 136, 0.2);
+    color: var(--quantum-success);
+    border: 1px solid var(--quantum-success);
+}
+
+/* ========== 컨트롤 패널 ========== */
+.control-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.control-label {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 1rem;
+}
+
+.control-select, .control-slider {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    padding: 12px 15px;
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: all var(--transition-normal);
+}
+
+.control-select:focus, .control-slider:focus {
+    outline: none;
+    border-color: var(--quantum-primary);
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+}
+
+.control-select option {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.control-slider {
+    height: 40px;
+    cursor: pointer;
+}
+
+.control-slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--quantum-primary);
+    cursor: pointer;
+    box-shadow: 0 0 10px var(--quantum-primary);
+}
+
+.control-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--quantum-primary);
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 0 10px var(--quantum-primary);
+}
+
+/* ========== 액션 버튼 ========== */
+.action-buttons {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 25px;
+    font-family: var(--font-secondary);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transition: all var(--transition-normal);
+    transform: translate(-50%, -50%);
+}
+
+.btn:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.btn-primary {
+    background: linear-gradient(45deg, var(--quantum-primary), var(--quantum-secondary));
+    color: var(--bg-primary);
+    box-shadow: 0 10px 25px rgba(0, 255, 136, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 35px rgba(0, 255, 136, 0.5);
+}
+
+.btn-secondary {
+    background: linear-gradient(45deg, var(--quantum-warning), var(--quantum-accent));
+    color: var(--text-primary);
+    box-shadow: 0 10px 25px rgba(255, 170, 0, 0.3);
+}
+
+.btn-secondary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 35px rgba(255, 170, 0, 0.5);
+}
+
+.btn-accent {
+    background: linear-gradient(45deg, var(--quantum-accent), var(--quantum-secondary));
+    color: var(--text-primary);
+    box-shadow: 0 10px 25px rgba(255, 110, 199, 0.3);
+}
+
+.btn-accent:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 35px rgba(255, 110, 199, 0.5);
+}
+
+.btn-icon {
+    font-size: 1.2rem;
+    position: relative;
+    z-index: 1;
+}
+
+.btn-text {
+    position: relative;
+    z-index: 1;
+}
+
+/* ========== 결과 패널 ========== */
+.results-container {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+    align-items: start;
+}
+
+.color-palette {
+    min-height: 300px;
+    border-radius: 15px;
+    border: 2px dashed rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+}
+
+.color-palette:hover {
+    border-color: var(--quantum-primary);
+    box-shadow: var(--glow-quantum);
+}
+
+.palette-placeholder {
+    text-align: center;
+    color: var(--text-muted);
+}
+
+.placeholder-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    opacity: 0.5;
+}
+
+.placeholder-text {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.color-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+    gap: 10px;
+    padding: 20px;
+    width: 100%;
+}
+
+.color-item {
+    aspect-ratio: 1;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    position: relative;
+    border: 2px solid transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+.color-item:hover {
+    transform: scale(1.1);
+    border-color: var(--text-primary);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.color-item::after {
+    content: attr(data-type);
+    position: absolute;
+    bottom: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+/* ========== 성능 통계 ========== */
+.performance-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.stat-item {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 20px;
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+    transition: all var(--transition-normal);
+}
+
+.stat-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--quantum-primary);
+    transform: translateY(-2px);
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+.stat-value {
+    font-family: var(--font-primary);
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--quantum-primary);
+    text-shadow: var(--glow-quantum);
+}
+
+.stat-unit {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 5px;
+}
+
+/* ========== 모니터링 패널 ========== */
+.monitoring-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+.monitor-graph {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    padding: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#performanceChart {
+    width: 100%;
+    height: 200px;
+    border-radius: 10px;
+}
+
+.system-log {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+}
+
+.log-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.log-title {
+    font-weight: 600;
+    color: var(--quantum-primary);
+}
+
+.log-clear {
+    background: transparent;
+    border: 1px solid var(--quantum-accent);
+    color: var(--quantum-accent);
+    padding: 5px 12px;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all var(--transition-fast);
+}
+
+.log-clear:hover {
+    background: var(--quantum-accent);
+    color: var(--bg-primary);
+}
+
+.log-content {
+    height: 200px;
+    overflow-y: auto;
+    padding: 15px 20px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+.log-entry {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 8px;
+    opacity: 0;
+    animation: logFadeIn 0.5s ease forwards;
+}
+
+@keyframes logFadeIn {
+    to { opacity: 1; }
+}
+
+.log-time {
+    color: var(--text-muted);
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.log-message {
+    color: var(--text-primary);
+}
+
+.log-entry.startup .log-message {
+    color: var(--quantum-primary);
+}
+
+.log-entry.info .log-message {
+    color: var(--quantum-secondary);
+}
+
+.log-entry.success .log-message {
+    color: var(--quantum-success);
+}
+
+.log-entry.warning .log-message {
+    color: var(--quantum-warning);
+}
+
+.log-entry.error .log-message {
+    color: var(--quantum-error);
+}
+
+/* ========== 푸터 ========== */
+.footer {
+    background: var(--bg-card);
+    border-radius: 20px;
+    padding: 40px 30px 20px;
+    margin-top: 50px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.footer-section h3 {
+    color: var(--quantum-primary);
+    font-family: var(--font-primary);
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    text-shadow: var(--glow-quantum);
+}
+
+.footer-section ul {
+    list-style: none;
+}
+
+.footer-section li {
+    padding: 5px 0;
+    color: var(--text-secondary);
+    transition: color var(--transition-fast);
+}
+
+.footer-section li:hover {
+    color: var(--quantum-primary);
+    cursor: default;
+}
+
+.footer-bottom {
+    text-align: center;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-muted);
+}
+
+.footer-bottom a {
+    color: var(--quantum-primary);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+.footer-bottom a:hover {
+    color: var(--quantum-secondary);
+}
+
+/* ========== 모달 ========== */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+}
+
+.modal-content {
+    background: var(--bg-card);
+    margin: 5% auto;
+    padding: 30px;
+    border: 1px solid var(--quantum-primary);
+    border-radius: 20px;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: var(--glow-quantum);
+    position: relative;
+}
+
+.close {
+    color: var(--text-muted);
+    float: right;
+    font-size: 2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color var(--transition-fast);
+}
+
+.close:hover {
+    color: var(--quantum-primary);
+}
+
+.modal h2 {
+    color: var(--quantum-primary);
+    font-family: var(--font-primary);
+    margin-bottom: 20px;
+}
+
+.modal-body {
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.feature-list {
+    margin-top: 20px;
+}
+
+.feature-item {
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.feature-item:last-child {
+    border-bottom: none;
+}
+
+.feature-item strong {
+    color: var(--quantum-primary);
+}
+
+/* ========== 반응형 디자인 ========== */
+@media (max-width: 1200px) {
+    .main-container {
+        padding: 15px;
+    }
+    
+    .header {
+        padding: 20px;
+    }
+    
+    .main-title {
+        font-size: 2rem;
+    }
+    
+    .results-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .monitoring-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        text-align: center;
+        gap: 20px;
+    }
+    
+    .status-indicators {
+        justify-content: center;
+    }
+    
+    .control-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .btn {
+        width: 100%;
+        max-width: 300px;
+        justify-content: center;
+    }
+    
+    .status-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .footer-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-container {
+        padding: 10px;
+    }
+    
+    section {
+        padding: 20px;
+    }
+    
+    .main-title {
+        font-size: 1.5rem;
+    }
+    
+    .section-title {
+        font-size: 1.4rem;
+    }
+    
+    .quantum-logo {
+        font-size: 3rem;
+    }
+}
+
+/* ========== 커스텀 스크롤바 ========== */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-tertiary);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--quantum-primary);
+    border-radius: 10px;
+    box-shadow: 0 0 10px var(--quantum-primary);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--quantum-secondary);
+}
+
+/* ========== 추가 애니메이션 ========== */
+@keyframes quantumPulse {
+    0%, 100% {
+        box-shadow: 0 0 5px var(--quantum-primary);
+    }
+    50% {
+        box-shadow: 0 0 25px var(--quantum-primary), 0 0 35px var(--quantum-primary);
+    }
+}
+
+.quantum-pulse {
+    animation: quantumPulse 2s ease-in-out infinite;
+}
+
+@keyframes dataFlow {
+    0% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+.data-flow {
+    animation: dataFlow 3s ease-in-out infinite;
+}
+
+/* ========== 성능 최적화 ========== */
+.gpu-accelerated {
+    will-change: transform;
+    transform: translateZ(0);
+}
+
+.smooth-animation {
+    animation-fill-mode: both;
+    backface-visibility: hidden;
+    perspective: 1000px;
+}
+
+/* ========== 접근성 ========== */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ========== 다크모드 지원 ========== */
+@media (prefers-color-scheme: light) {
+    :root {
+        --bg-primary: #f0f0f0;
+        --bg-secondary: #e0e0e0;
+        --bg-tertiary: #d0d0d0;
+        --bg-card: rgba(240, 240, 240, 0.9);
+        --text-primary: #000000;
+        --text-secondary: #333333;
+        --text-muted: #777777;
+    }
+}
+
+/* ========== 인쇄 스타일 ========== */
+@media print {
+    .quantum-background,
+    .action-buttons,
+    .monitoring-panel {
+        display: none;
+    }
+    
+    body {
+        background: white;
+        color: black;
+    }
+    
+    .main-container {
+        max-width: none;
+        padding: 0;
+    }
+}
+
+/* ========== 하이 DPI 디스플레이 지원 ========== */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .main-title,
+    .section-title {
+        text-rendering: optimizeLegibility;
+    }
+}
+
+/* ========== 최종 글로벌 스타일 ========== */
+html {
+    scroll-behavior: smooth;
+}
+
+::selection {
+    background: var(--quantum-primary);
+    color: var(--bg-primary);
+}
+
+:focus {
+    outline: 2px solid var(--quantum-primary);
+    outline-offset: 2px;
+}
+
+/* 로딩 애니메이션 */
+.loading {
+    position: relative;
+    overflow: hidden;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.3), transparent);
+    animation: loadingShine 1.5s ease-in-out infinite;
+}
+
+@keyframes loadingShine {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
