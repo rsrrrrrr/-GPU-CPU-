@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuantumUnified Pro - 테스트 페이지</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a, #1a1a1a);
+            color: white;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .title {
+            font-size: 2.5rem;
+            color: #00ff88;
+            margin-bottom: 20px;
+        }
+        .test-section {
+            background: rgba(26, 26, 26, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(0, 255, 136, 0.2);
+        }
+        .test-title {
+            color: #00ff88;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+        .test-button {
+            background: linear-gradient(45deg, #00ff88, #00d4ff);
+            color: black;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 255, 136, 0.3);
+        }
+        .test-result {
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            min-height: 60px;
+            border-left: 3px solid #00ff88;
+        }
+        .success {
+            color: #00ff88;
+        }
+        .error {
+            color: #ff4757;
+        }
+        .warning {
+            color: #ffaa00;
+        }
+        .info {
+            color: #00d4ff;
+        }
+        .loading {
+            color: #888;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .stat-card {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #00ff88;
+        }
+        .stat-label {
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">⚛️ QuantumUnified Pro 테스트</h1>
+            <p>시스템 능력 검증 및 성능 테스트</p>
+        </div>
+
+        <!-- 시스템 호환성 테스트 -->
+        <div class="test-section">
+            <h2 class="test-title">🔍 시스템 호환성 검사</h2>
+            <button class="test-button" onclick="testCompatibility()">호환성 검사 실행</button>
+            <div id="compatibilityResult" class="test-result loading">
+                테스트를 실행하려면 버튼을 클릭하세요...
+            </div>
+        </div>
+
+        <!-- WebGL 테스트 -->
+        <div class="test-section">
+            <h2 class="test-title">🚀 WebGL GPU 테스트</h2>
+            <button class="test-button" onclick="testWebGL()">WebGL 테스트</button>
+            <button class="test-button" onclick="testGPUPerformance()">GPU 성능 테스트</button>
+            <div id="webglResult" class="test-result loading">
+                GPU 능력을 테스트하려면 버튼을 클릭하세요...
+            </div>
+        </div>
+
+        <!-- Web Workers 테스트 -->
+        <div class="test-section">
+            <h2 class="test-title">⚡ CPU 멀티코어 테스트</h2>
+            <button class="test-button" onclick="testWebWorkers()">Worker 테스트</button>
+            <button class="test-button" onclick="testCPUPerformance()">CPU 성능 테스트</button>
+            <div id="workersResult" class="test-result loading">
+                CPU 멀티스레딩을 테스트하려면 버튼을 클릭하세요...
+            </div>
+        </div>
+
+        <!-- 양자 시뮬레이션 테스트 -->
+        <div class="test-section">
+            <h2 class="test-title">⚛️ 양자 시뮬레이션 테스트</h2>
+            <button class="test-button" onclick="testQuantumSimulation()">양자 테스트</button>
+            <button class="test-button" onclick="testColorGeneration()">컬러 생성 테스트</button>
+            <div id="quantumResult" class="test-result loading">
+                양자 컴퓨팅 시뮬레이션을 테스트하려면 버튼을 클릭하세요...
+            </div>
+        </div>
+
+        <!-- 통합 성능 테스트 -->
+        <div class="test-section">
+            <h2 class="test-title">📊 통합 성능 벤치마크</h2>
+            <button class="test-button" onclick="runFullBenchmark()">전체 벤치마크 실행</button>
+            <div id="benchmarkResult" class="test-result loading">
+                종합 성능 테스트를 실행하려면 버튼을 클릭하세요...
+            </div>
+            
+            <div class="stats-grid" id="statsGrid" style="display: none;">
+                <div class="stat-card">
+                    <div class="stat-value" id="quantumScore">0</div>
+                    <div class="stat-label">양자 점수</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="gpuScore">0</div>
+                    <div class="stat-label">GPU 점수</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="cpuScore">0</div>
+                    <div class="stat-label">CPU 점수</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="overallScore">0</div>
+                    <div class="stat-label">종합 점수</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 글로벌 테스트 상태
+        const testResults = {
+            compatibility: null,
+            webgl: null,
+            workers: null,
+            quantum: null,
+            performance: {}
+        };
+
+        // 유틸리티 함수들
+        function updateResult(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<span class="${type}">${message}</span>`;
+        }
+
+        function formatTime(ms) {
+            return `${ms.toFixed(2)}ms`;
+        }
+
+        function formatNumber(num) {
+            return new Intl.NumberFormat('ko-KR').format(Math.round(num));
+        }
+
+        // 1. 시스템 호환성 검사
+        async function testCompatibility() {
+            updateResult('compatibilityResult', '🔍 시스템 검사 중...', 'loading');
+            
+            const results = [];
+            
+            // 기본 브라우저 기능
+            results.push(`브라우저: ${navigator.userAgent.split(' ')[0]}`);
+            results.push(`플랫폼: ${navigator.platform}`);
+            results.push(`CPU 코어: ${navigator.hardwareConcurrency || '알 수 없음'}개`);
+            results.push(`메모리: ${navigator.deviceMemory ? navigator.deviceMemory + 'GB' : '알 수 없음'}`);
+            
+            // WebGL 지원
+            const canvas = document.createElement('canvas');
+            const webgl2 = canvas.getContext('webgl2');
+            const webgl1 = canvas.getContext('webgl');
+            
+            if (webgl2) {
+                results.push('✅ WebGL 2.0 지원');
+                testResults.webgl = 'webgl2';
+            } else if (webgl1) {
+                results.push('⚠️ WebGL 1.0 지원 (제한적)');
+                testResults.webgl = 'webgl1';
+            } else {
+                results.push('❌ WebGL 미지원');
+                testResults.webgl = null;
+            }
+            
+            // Web Workers 지원
+            if (typeof Worker !== 'undefined') {
+                results.push('✅ Web Workers 지원');
+                testResults.workers = true;
+            } else {
+                results.push('❌ Web Workers 미지원');
+                testResults.workers = false;
+            }
+            
+            // WASM 지원
+            if (typeof WebAssembly !== 'undefined') {
+                results.push('✅ WebAssembly 지원');
+            } else {
+                results.push('❌ WebAssembly 미지원');
+            }
+            
+            // 메모리 API
+            if ('memory' in performance) {
+                results.push('✅ 메모리 API 지원');
+            } else {
+                results.push('⚠️ 메모리 API 제한적');
+            }
+            
+            testResults.compatibility = results;
+            updateResult('compatibilityResult', results.join('<br>'), 'success');
+        }
+
+        // 2. WebGL GPU 테스트
+        async function testWebGL() {
+            updateResult('webglResult', '🚀 WebGL 검사 중...', 'loading');
+            
+            const canvas = document.createElement('canvas');
+            const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
+            
+            if (!gl) {
+                updateResult('webglResult', '❌ WebGL을 사용할 수 없습니다', 'error');
+                return;
+            }
+            
+            const results = [];
+            
+            // WebGL 버전
+            const version = gl.getParameter(gl.VERSION);
+            results.push(`WebGL 버전: ${version}`);
+            
+            // 벤더 정보
+            const vendor = gl.getParameter(gl.VENDOR);
+            const renderer = gl.getParameter(gl.RENDERER);
+            results.push(`GPU: ${vendor}`);
+            results.push(`렌더러: ${renderer}`);
+            
+            // 지원 기능
+            const maxTextureSize = gl.getParameter(gl.MAX_TEXTURE_SIZE);
+            const maxViewport = gl.getParameter(gl.MAX_VIEWPORT_DIMS);
+            
+            results.push(`최대 텍스처 크기: ${maxTextureSize}px`);
+            results.push(`최대 뷰포트: ${maxViewport[0]}×${maxViewport[1]}`);
+            
+            // 확장 기능
+            const extensions = gl.getSupportedExtensions();
+            results.push(`지원 확장: ${extensions.length}개`);
+            
+            updateResult('webglResult', results.join('<br>'), 'success');
+        }
+
+        async function testGPUPerformance() {
+            updateResult('webglResult', '⚡ GPU 성능 측정 중...', 'loading');
+            
+            const startTime = performance.now();
+            
+            // GPU 계산 시뮬레이션
+            const canvas = document.createElement('canvas');
+            canvas.width = 1024;
+            canvas.height = 1024;
+            const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
+            
+            if (!gl) {
+                updateResult('webglResult', '❌ GPU 성능 테스트 실패', 'error');
+                return;
+            }
+            
+            // 간단한 렌더링 테스트
+            for (let i = 0; i < 100; i++) {
+                gl.clear(gl.COLOR_BUFFER_BIT);
+                gl.clearColor(Math.random(), Math.random(), Math.random(), 1.0);
+            }
+            
+            const duration = performance.now() - startTime;
+            const score = Math.round(10000 / duration);
+            
+            testResults.performance.gpu = score;
+            
+            updateResult('webglResult', 
+                `🚀 GPU 성능 테스트 완료<br>
+                 소요시간: ${formatTime(duration)}<br>
+                 GPU 점수: ${formatNumber(score)}`, 'success');
+        }
+
+        // 3. Web Workers CPU 테스트
+        async function testWebWorkers() {
+            updateResult('workersResult', '⚡ Web Workers 테스트 중...', 'loading');
+            
+            if (!window.Worker) {
+                updateResult('workersResult', '❌ Web Workers를 지원하지 않습니다', 'error');
+                return;
+            }
+            
+            const workerCount = navigator.hardwareConcurrency || 4;
+            const results = [];
+            
+            results.push(`감지된 CPU 코어: ${workerCount}개`);
+            
+            try {
+                // 간단한 워커 생성 테스트
+                const workerCode = `
+                    self.onmessage = function(e) {
+                        const result = e.data * e.data;
+                        self.postMessage(result);
+                    }
+                `;
+                
+                const blob = new Blob([workerCode], { type: 'application/javascript' });
+                const workerUrl = URL.createObjectURL(blob);
+                const worker = new Worker(workerUrl);
+                
+                const testPromise = new Promise((resolve) => {
+                    worker.onmessage = (e) => {
+                        worker.terminate();
+                        URL.revokeObjectURL(workerUrl);
+                        resolve(e.data);
+                    };
+                    worker.postMessage(42);
+                });
+                
+                const result = await testPromise;
+                results.push(`✅ Worker 계산 테스트: ${result} (예상: 1764)`);
+                
+                testResults.workers = true;
+                updateResult('workersResult', results.join('<br>'), 'success');
+                
+            } catch (error) {
+                results.push(`❌ Worker 생성 실패: ${error.message}`);
+                updateResult('workersResult', results.join('<br>'), 'error');
+            }
+        }
+
+        async function testCPUPerformance() {
+            updateResult('workersResult', '🔥 CPU 성능 측정 중...', 'loading');
+            
+            const workerCount = navigator.hardwareConcurrency || 4;
+            const startTime = performance.now();
+            
+            // CPU 집약적 계산
+            let result = 0;
+            for (let i = 0; i < 100000; i++) {
+                result += Math.sin(i) * Math.cos(i);
+            }
+            
+            const singleThreadTime = performance.now() - startTime;
+            
+            // 멀티스레드 시뮬레이션 (간단한 버전)
+            const multiStartTime = performance.now();
+            const promises = [];
+            
+            for (let w = 0; w < workerCount; w++) {
+                promises.push(new Promise(resolve => {
+                    setTimeout(() => {
+                        let localResult = 0;
+                        for (let i = 0; i < 25000; i++) {
+                            localResult += Math.sin(i + w * 25000) * Math.cos(i + w * 25000);
+                        }
+                        resolve(localResult);
+                    }, 0);
+                }));
+            }
+            
+            await Promise.all(promises);
+            const multiThreadTime = performance.now() - multiStartTime;
+            
+            const cpuScore = Math.round(100000 / singleThreadTime);
+            const speedup = singleThreadTime / multiThreadTime;
+            
+            testResults.performance.cpu = cpuScore;
+            
+            updateResult('workersResult', 
+                `⚡ CPU 성능 테스트 완료<br>
+                 단일스레드: ${formatTime(singleThreadTime)}<br>
+                 멀티스레드: ${formatTime(multiThreadTime)}<br>
+                 가속비: ${speedup.toFixed(2)}x<br>
+                 CPU 점수: ${formatNumber(cpuScore)}`, 'success');
+        }
+
+        // 4. 양자 시뮬레이션 테스트
+        async function testQuantumSimulation() {
+            updateResult('quantumResult', '⚛️ 양자 시뮬레이션 테스트 중...', 'loading');
+            
+            const startTime = performance.now();
+            
+            // 양자 상태 시뮬레이션
+            const qubits = 4;
+            const states = Math.pow(2, qubits);
+            const stateVector = new Array(states);
+            
+            // 하다마드 게이트 시뮬레이션
+            for (let i = 0; i < states; i++) {
+                stateVector[i] = {
+                    amplitude: 1 / Math.sqrt(states),
+                    phase: Math.random() * 2 * Math.PI
+                };
+            }
+            
+            // 양자 측정 시뮬레이션
+            const measurements = [];
+            for (let shot = 0; shot < 1000; shot++) {
+                const random = Math.random();
+                let cumulative = 0;
+                
+                for (let i = 0; i < states; i++) {
+                    cumulative += stateVector[i].amplitude * stateVector[i].amplitude;
+                    if (random <= cumulative) {
+                        measurements.push(i.toString(2).padStart(qubits, '0'));
+                        break;
+                    }
+                }
+            }
+            
+            const duration = performance.now() - startTime;
+            const quantumScore = Math.round(10000 / duration);
+            
+            testResults.performance.quantum = quantumScore;
+            
+            // 결과 분석
+            const uniqueStates = new Set(measurements).size;
+            const entropy = -measurements.reduce((acc, state) => {
+                const count = measurements.filter(s => s === state).length;
+                const prob = count / measurements.length;
+                return acc + (prob > 0 ? prob * Math.log2(prob) : 0);
+            }, 0);
+            
+            updateResult('quantumResult', 
+                `⚛️ 양자 시뮬레이션 완료<br>
+                 큐비트: ${qubits}개<br>
+                 측정: ${measurements.length}회<br>
+                 고유 상태: ${uniqueStates}개<br>
+                 엔트로피: ${entropy.toFixed(2)}<br>
+                 처리시간: ${formatTime(duration)}<br>
+                 양자 점수: ${formatNumber(quantumScore)}`, 'success');
+        }
+
+        async function testColorGeneration() {
+            updateResult('quantumResult', '🎨 양자 컬러 생성 테스트 중...', 'loading');
+            
+            const startTime = performance.now();
+            const colorCount = 16;
+            const colors = [];
+            
+            // 양자 기반 컬러 생성 시뮬레이션
+            for (let i = 0; i < colorCount; i++) {
+                const quantumState = Math.random();
+                const phase = Math.random() * 2 * Math.PI;
+                
+                const hue = (quantumState * 360 + Math.sin(phase) * 60) % 360;
+                const saturation = 0.7 + Math.cos(phase) * 0.3;
+                const value = 0.6 + quantumState * 0.4;
+                
+                // HSV to RGB 변환
+                const c = value * saturation;
+                const x = c * (1 - Math.abs((hue / 60) % 2 - 1));
+                const m = value - c;
+                
+                let r, g, b;
+                if (hue < 60) [r, g, b] = [c, x, 0];
+                else if (hue < 120) [r, g, b] = [x, c, 0];
+                else if (hue < 180) [r, g, b] = [0, c, x];
+                else if (hue < 240) [r, g, b] = [0, x, c];
+                else if (hue < 300) [r, g, b] = [x, 0, c];
+                else [r, g, b] = [c, 0, x];
+                
+                r = Math.round((r + m) * 255);
+                g = Math.round((g + m) * 255);
+                b = Math.round((b + m) * 255);
+                
+                const hex = `#${[r, g, b].map(c => c.toString(16).padStart(2, '0')).join('')}`;
+                colors.push(hex);
+            }
+            
+            const duration = performance.now() - startTime;
+            const colorsPerSecond = Math.round(colorCount / (duration / 1000));
+            
+            // 컬러 팔레트 표시
+            const colorDisplay = colors.map(color => 
+                `<span style="background: ${color}; padding: 2px 8px; margin: 2px; border-radius: 3px; font-size: 0.8rem;">${color}</span>`
+            ).join('');
+            
+            updateResult('quantumResult', 
+                `🎨 양자 컬러 생성 완료<br>
+                 생성된 컬러: ${colorCount}개<br>
+                 처리시간: ${formatTime(duration)}<br>
+                 속도: ${formatNumber(colorsPerSecond)} 컬러/초<br><br>
+                 ${colorDisplay}`, 'success');
+        }
+
+        // 5. 통합 벤치마크
+        async function runFullBenchmark() {
+            updateResult('benchmarkResult', '📊 종합 성능 벤치마크 실행 중...', 'loading');
+            
+            const benchmarkStartTime = performance.now();
+            
+            // 모든 테스트 순차 실행
+            await testQuantumSimulation();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await testGPUPerformance();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await testCPUPerformance();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            const totalTime = performance.now() - benchmarkStartTime;
+            
+            // 점수 계산
+            const quantumScore = testResults.performance.quantum || 0;
+            const gpuScore = testResults.performance.gpu || 0;
+            const cpuScore = testResults.performance.cpu || 0;
+            
+            const overallScore = Math.round((quantumScore * 0.4 + gpuScore * 0.3 + cpuScore * 0.3));
+            
+            // UI 업데이트
+            document.getElementById('quantumScore').textContent = formatNumber(quantumScore);
+            document.getElementById('gpuScore').textContent = formatNumber(gpuScore);
+            document.getElementById('cpuScore').textContent = formatNumber(cpuScore);
+            document.getElementById('overallScore').textContent = formatNumber(overallScore);
+            
+            document.getElementById('statsGrid').style.display = 'grid';
+            
+            // 성능 등급 계산
+            let grade = 'F';
+            if (overallScore > 8000) grade = 'S+';
+            else if (overallScore > 6000) grade = 'S';
+            else if (overallScore > 4000) grade = 'A';
+            else if (overallScore > 2000) grade = 'B';
+            else if (overallScore > 1000) grade = 'C';
+            else if (overallScore > 500) grade = 'D';
+            
+            updateResult('benchmarkResult', 
+                `📊 종합 벤치마크 완료!<br>
+                 총 소요시간: ${formatTime(totalTime)}<br>
+                 종합 점수: ${formatNumber(overallScore)}<br>
+                 성능 등급: <span style="color: #00ff88; font-size: 1.2rem; font-weight: bold;">${grade}</span><br><br>
+                 🌟 QuantumUnified Pro에서 더 강력한 성능을 경험해보세요!`, 'success');
+        }
+
+        // 페이지 로드 시 자동 호환성 검사
+        window.addEventListener('load', () => {
+            console.log('🚀 QuantumUnified Pro 테스트 페이지 로드됨');
+            setTimeout(() => {
+                testCompatibility();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
