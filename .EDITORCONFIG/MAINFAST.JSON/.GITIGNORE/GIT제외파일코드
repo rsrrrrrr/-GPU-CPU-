@@ -1,0 +1,520 @@
+# QuantumUnified Pro .gitignore
+
+# ========== Node.js ==========
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# nyc test coverage
+.nyc_output
+
+# Grunt intermediate storage
+.grunt
+
+# Bower dependency directory
+bower_components
+
+# node-waf configuration
+.lock-wscript
+
+# Compiled binary addons
+build/Release
+
+# Dependency directories
+jspm_packages/
+
+# Snowpack dependency directory
+web_modules/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional stylelint cache
+.stylelintcache
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variable files
+.env
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
+
+# parcel-bundler cache
+.cache
+.parcel-cache
+
+# Next.js build output
+.next
+
+# Nuxt.js build / generate output
+.nuxt
+dist
+
+# Gatsby files
+.cache/
+public
+
+# Vuepress build output
+.vuepress/dist
+
+# Docusaurus cache and build
+.docusaurus
+
+# Serverless directories
+.serverless/
+
+# FuseBox cache
+.fusebox/
+
+# DynamoDB Local files
+.dynamodb/
+
+# TernJS port file
+.tern-port
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# yarn v2
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# ========== Python ==========
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+.pybuilder/
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# poetry
+poetry.lock
+
+# pdm
+.pdm.toml
+
+# PEP 582
+__pypackages__/
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug/
+
+# ========== IDEs ==========
+# VSCode
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+
+# Local History for Visual Studio Code
+.history/
+
+# Built Visual Studio Code Extensions
+*.vsix
+
+# JetBrains
+.idea/
+*.swp
+*.swo
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*~
+*.swp
+*.swo
+.netrwhist
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# ========== OS ==========
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ========== 프로젝트 특화 ==========
+# 빌드 결과물
+dist/
+build/
+out/
+target/
+
+# 로그 파일들
+*.log
+logs/
+quantum_unified.log
+
+# 테스트 결과
+test-results/
+jest-results/
+coverage/
+
+# 임시 파일들
+tmp/
+temp/
+.tmp/
+*.tmp
+*.temp
+*.cache
+
+# 설정 파일들
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+config.local.json
+settings.local.json
+
+# GPU 컴파일 캐시
+*.ptx
+*.cubin
+*.fatbin
+
+# WebGL 셰이더 캐시
+shader_cache/
+*.spv
+
+# 성능 프로파일링 결과
+*.prof
+*.perf
+performance_*.json
+
+# 양자 시뮬레이션 결과
+quantum_results/
+simulation_data/
+measurement_*.json
+
+# 색상 팔레트 출력
+palettes/
+color_exports/
+generated_colors/
+
+# 벤치마크 결과
+benchmark_results/
+performance_logs/
+
+# Docker 관련
+.dockerignore
+docker-compose.override.yml
+
+# 키 및 인증서
+*.key
+*.pem
+*.crt
+*.cert
+secrets/
+
+# 백업 파일
+*.bak
+*.backup
+*.old
+
+# 압축 파일
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# 미디어 파일들 (큰 용량)
+*.mp4
+*.avi
+*.mov
+*.wmv
+*.mp3
+*.wav
+*.flac
+
+# 큰 데이터 파일들
+*.csv
+*.json
+data/
+datasets/
+models/
+
+# 패키지 관리자 락 파일들 (선택적)
+# package-lock.json
+# yarn.lock
+# Pipfile.lock
+
+# ========== 개발 도구 ==========
+# Webpack
+webpack-stats.json
+
+# Parcel
+.parcel-cache/
+
+# Rollup
+.rollup.cache/
+
+# Vite
+.vite/
+
+# ESBuild
+.esbuild/
+
+# ========== 클라우드 & 배포 ==========
+# Vercel
+.vercel
+
+# Netlify
+.netlify
+
+# AWS
+.aws/
+
+# Google Cloud
+.gcloud/
+
+# Azure
+.azure/
+
+# Heroku
+.heroku/
+
+# ========== 기타 ==========
+# 메모장 및 노트
+TODO.md
+NOTES.md
+*.notes
+*.memo
+
+# 실험적 파일들
+experimental/
+sandbox/
+playground/
+
+# 문서 초안
+drafts/
+*.draft.*
+
+# 라이선스 관련
+LICENSES/
+license_check.txt
+
+# 보안 스캔 결과
+security_scan/
+vulnerability_report.json
+
+# 커밋 메시지 템플릿
+.gitmessage
+
+# Git 훅스 (로컬)
+.git/hooks/
+
+# 기타 숨김 파일
+.*
+!.gitignore
+!.gitkeep
+!.github/
+!.vscode/settings.json
+!.editorconfig
+!.prettierrc
+!.eslintrc*
+
+# QuantumUnified 특화 제외
+quantum_state_*.dat
+measurement_results_*.json
+gpu_benchmark_*.log
+worker_pool_*.cache
