@@ -1,0 +1,505 @@
+#!/usr/bin/env node
+
+/**
+ * QuantumUnified Pro Express Server
+ * Node.js 기반 고성능 웹 서버
+ */
+
+const express = require('express');
+const cors = require('cors');
+const helmet = require('helmet');
+const compression = require('compression');
+const morgan = require('morgan');
+const path = require('path');
+const fs = require('fs').promises;
+const os = require('os');
+const cluster = require('cluster');
+const numCPUs = os.cpus().length;
+
+require('dotenv').config();
+
+const app = express();
+const PORT = process.env.NODE_PORT || 3000;
+const HOST = process.env.HOST || 'localhost';
+
+// 미들웨어 설정
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+            styleSrc: ["'self'", "'unsafe-inline'"],
+            imgSrc: ["'self'", "data:", "blob:"],
+            connectSrc: ["'self'", "ws:", "wss:"],
+            workerSrc: ["'self'", "blob:"]
+        }
+    }
+}));
+
+app.use(compression());
+app.use(cors({
+    origin: process.env.CORS_ORIGIN || '*',
+    credentials: true
+}));
+
+app.use(morgan('combined', {
+    stream: {
+        write: (message) => {
+            console.log(message.trim());
+            // 로그 파일에 기록
+            appendToLogFile(message.trim());
+        }
+    }
+}));
+
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// 정적 파일 서빙
+app.use(express.static(path.join(__dirname, '../dist'), {
+    maxAge: '1d',
+    etag: true
+}));
+
+// 시스템 메트릭스 추적
+let systemMetrics = {
+    startTime: Date.now(),
+    requestCount: 0,
+    errorCount: 0,
+    activeConnections: 0,
+    cpuUsage: 0,
+    memoryUsage: 0,
+    lastUpdated: Date.now()
+};
+
+// 로그 파일 기록
+async function appendToLogFile(message) {
+    try {
+        const logDir = path.join(__dirname, '../logs');
+        await fs.mkdir(logDir, { recursive: true });
+        const logFile = path.join(logDir, 'express.log');
+        const timestamp = new Date().toISOString();
+        await fs.appendFile(logFile, `${timestamp} - ${message}\n`);
+    } catch (error) {
+        console.error('로그 기록 실패:', error);
+    }
+}
+
+// 성능 모니터링
+function updateSystemMetrics() {
+    const usage = process.cpuUsage();
+    const memUsage = process.memoryUsage();
+    
+    systemMetrics.cpuUsage = usage.user + usage.system;
+    systemMetrics.memoryUsage = {
+        rss: Math.round(memUsage.rss / 1024 / 1024), // MB
+        heapTotal: Math.round(memUsage.heapTotal / 1024 / 1024),
+        heapUsed: Math.round(memUsage.heapUsed / 1024 / 1024),
+        external: Math.round(memUsage.external / 1024 / 1024)
+    };
+    systemMetrics.lastUpdated = Date.now();
+}
+
+// 1초마다 시스템 메트릭스 업데이트
+setInterval(updateSystemMetrics, 1000);
+
+// 양자 컴퓨팅 시뮬레이터
+class QuantumSimulator {
+    static generateQuantumColors(count, mode = 'hybrid') {
+        const colors = [];
+        const startTime = Date.now();
+        
+        for (let i = 0; i < count; i++) {
+            let hue, saturation, lightness;
+            
+            switch (mode) {
+                case 'quantum':
+                    // 양자 중첩 시뮬레이션
+                    hue = (Math.random() + Math.random()) / 2 * 360;
+                    saturation = 70 + Math.random() * 30;
+                    lightness = 50 + Math.random() * 30;
+                    break;
+                    
+                case 'gpu':
+                    // GPU 최적화 병렬 처리 시뮬레이션
+                    hue = (i / count * 360 + Math.random() * 30) % 360;
+                    saturation = 80;
+                    lightness = 60;
+                    break;
+                    
+                case 'cpu':
+                    // CPU 멀티코어 처리
+                    hue = Math.random() * 360;
+                    saturation = 60 + Math.random() * 20;
+                    lightness = 45 + Math.random() * 25;
+                    break;
+                    
+                case 'eco':
+                    // 절전 모드
+                    hue = Math.random() * 360;
+                    saturation = 40 + Math.random() * 20;
+                    lightness = 70 + Math.random() * 15;
+                    break;
+                    
+                default: // hybrid
+                    hue = Math.random() * 360;
+                    saturation = 60 + Math.random() * 30;
+                    lightness = 50 + Math.random() * 30;
+            }
+            
+            colors.push(`hsl(${Math.round(hue)}, ${Math.round(saturation)}%, ${Math.round(lightness)}%)`);
+        }
+        
+        const processingTime = Date.now() - startTime;
+        
+        return {
+            colors,
+            processingTime,
+            mode,
+            count: colors.length,
+            performance: Math.round(colors.length / (processingTime / 1000))
+        };
+    }
+    
+    static optimizeParameters(taskSize, powerMode, mode) {
+        const modeMultipliers = {
+            quantum: 2.5,
+            gpu: 2.0,
+            cpu: 1.0,
+            eco: 0.5,
+            hybrid: 1.8
+        };
+        
+        const multiplier = modeMultipliers[mode] || 1.0;
+        const cpuCount = os.cpus().length;
+        
+        return {
+            optimalTaskSize: Math.min(Math.round(taskSize * multiplier), 1000),
+            optimalPowerMode: Math.min(Math.round(powerMode * 1.2), 10),
+            efficiencyGain: multiplier,
+            recommendedMode: cpuCount >= 8 ? 'quantum' : 'hybrid',
+            estimatedPerformance: Math.round(taskSize * powerMode * multiplier)
+        };
+    }
+}
+
+// Web Workers 시뮬레이션
+class WorkerPool {
+    constructor(size = numCPUs) {
+        this.size = size;
+        this.queue = [];
+        this.activeWorkers = 0;
+        console.log(`🔧 Worker Pool 초기화: ${size}개 워커`);
+    }
+    
+    async processTask(task) {
+        return new Promise((resolve) => {
+            this.queue.push({ task, resolve });
+            this.processQueue();
+        });
+    }
+    
+    processQueue() {
+        if (this.queue.length === 0 || this.activeWorkers >= this.size) {
+            return;
+        }
+        
+        const { task, resolve } = this.queue.shift();
+        this.activeWorkers++;
+        
+        // 실제 작업 처리 시뮬레이션
+        setTimeout(() => {
+            const result = QuantumSimulator.generateQuantumColors(
+                task.count, 
+                task.mode
+            );
+            
+            this.activeWorkers--;
+            resolve(result);
+            
+            // 큐에 더 많은 작업이 있으면 계속 처리
+            this.processQueue();
+        }, Math.random() * 100 + 50); // 50-150ms 처리 시간
+    }
+}
+
+const workerPool = new WorkerPool();
+
+// API 라우트
+
+// 루트 경로
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '../dist/index.html'));
+});
+
+// 시스템 상태 API
+app.get('/api/system/status', (req, res) => {
+    systemMetrics.requestCount++;
+    
+    res.json({
+        status: 'online',
+        timestamp: new Date().toISOString(),
+        metrics: {
+            ...systemMetrics,
+            uptime: Date.now() - systemMetrics.startTime,
+            nodeVersion: process.version,
+            cpuCount: numCPUs,
+            platform: os.platform(),
+            arch: os.arch(),
+            loadAverage: os.loadavg()
+        },
+        performance: {
+            activeWorkers: workerPool.activeWorkers,
+            queueLength: workerPool.queue.length
+        }
+    });
+});
+
+// 컬러 생성 API
+app.post('/api/quantum/colors', async (req, res) => {
+    try {
+        systemMetrics.requestCount++;
+        
+        const { count = 10, mode = 'hybrid' } = req.body;
+        
+        if (count > 1000) {
+            systemMetrics.errorCount++;
+            return res.status(400).json({ 
+                error: '최대 1000개까지 생성 가능합니다' 
+            });
+        }
+        
+        const result = await workerPool.processTask({ count, mode });
+        
+        res.json({
+            ...result,
+            timestamp: new Date().toISOString(),
+            serverInfo: {
+                nodeVersion: process.version,
+                cpuCount: numCPUs,
+                memoryUsage: systemMetrics.memoryUsage
+            }
+        });
+        
+    } catch (error) {
+        systemMetrics.errorCount++;
+        console.error('컬러 생성 오류:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// 자동 최적화 API
+app.post('/api/optimization/auto', (req, res) => {
+    try {
+        systemMetrics.requestCount++;
+        
+        const { taskSize = 64, powerMode = 7, mode = 'hybrid' } = req.body;
+        
+        const optimization = QuantumSimulator.optimizeParameters(
+            taskSize, 
+            powerMode, 
+            mode
+        );
+        
+        res.json({
+            optimization,
+            systemRecommendations: {
+                cpuIntensive: numCPUs >= 4,
+                memoryAvailable: systemMetrics.memoryUsage.heapUsed < 500,
+                recommendedWorkers: Math.min(numCPUs, 8),
+                currentLoad: os.loadavg()[0]
+            },
+            timestamp: new Date().toISOString()
+        });
+        
+    } catch (error) {
+        systemMetrics.errorCount++;
+        console.error('최적화 오류:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// 성능 테스트 API
+app.post('/api/performance/test', async (req, res) => {
+    try {
+        systemMetrics.requestCount++;
+        
+        const { duration = 5 } = req.body;
+        const testDuration = Math.min(duration, 30); // 최대 30초
+        
+        const modes = ['quantum', 'gpu', 'cpu', 'eco', 'hybrid'];
+        const results = {};
+        
+        // 각 모드별 성능 테스트
+        for (const mode of modes) {
+            const startTime = Date.now();
+            const testResult = await workerPool.processTask({ 
+                count: 100, 
+                mode 
+            });
+            const endTime = Date.now();
+            
+            results[mode] = {
+                colorsGenerated: testResult.count,
+                timeTaken: endTime - startTime,
+                colorsPerSecond: Math.round(testResult.count / ((endTime - startTime) / 1000)),
+                efficiency: testResult.performance
+            };
+        }
+        
+        // 최고 성능 모드 찾기
+        const bestMode = Object.keys(results).reduce((a, b) => 
+            results[a].colorsPerSecond > results[b].colorsPerSecond ? a : b
+        );
+        
+        res.json({
+            testResults: results,
+            bestMode,
+            testCompletedAt: new Date().toISOString(),
+            systemInfo: {
+                cpuUsage: systemMetrics.cpuUsage,
+                memoryUsage: systemMetrics.memoryUsage,
+                activeWorkers: workerPool.activeWorkers
+            }
+        });
+        
+    } catch (error) {
+        systemMetrics.errorCount++;
+        console.error('성능 테스트 오류:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// 로그 조회 API
+app.get('/api/logs', async (req, res) => {
+    try {
+        const logFile = path.join(__dirname, '../logs/express.log');
+        const data = await fs.readFile(logFile, 'utf8');
+        const lines = data.split('\n').filter(line => line.trim());
+        const recentLines = lines.slice(-100); // 최근 100줄
+        
+        res.json({
+            logs: recentLines,
+            totalLines: lines.length,
+            timestamp: new Date().toISOString()
+        });
+        
+    } catch (error) {
+        res.json({
+            logs: ['로그 파일을 찾을 수 없습니다.'],
+            totalLines: 0,
+            timestamp: new Date().toISOString()
+        });
+    }
+});
+
+// 헬스 체크
+app.get('/health', (req, res) => {
+    res.json({
+        status: 'healthy',
+        timestamp: new Date().toISOString(),
+        uptime: Date.now() - systemMetrics.startTime,
+        version: process.env.VERSION || '3.0.0',
+        nodeVersion: process.version,
+        metrics: systemMetrics
+    });
+});
+
+// WebSocket 지원 (선택사항)
+const server = require('http').createServer(app);
+const io = require('socket.io')(server, {
+    cors: {
+        origin: process.env.CORS_ORIGIN || '*',
+        methods: ['GET', 'POST']
+    }
+});
+
+io.on('connection', (socket) => {
+    console.log('🔌 클라이언트 연결:', socket.id);
+    systemMetrics.activeConnections++;
+    
+    // 실시간 시스템 상태 전송
+    const statusInterval = setInterval(() => {
+        socket.emit('systemStatus', systemMetrics);
+    }, 5000);
+    
+    socket.on('disconnect', () => {
+        console.log('🔌 클라이언트 연결 해제:', socket.id);
+        systemMetrics.activeConnections--;
+        clearInterval(statusInterval);
+    });
+    
+    socket.on('quantumCompute', async (data) => {
+        try {
+            const result = await workerPool.processTask(data);
+            socket.emit('quantumResult', result);
+        } catch (error) {
+            socket.emit('quantumError', { error: error.message });
+        }
+    });
+});
+
+// 에러 핸들링
+app.use((err, req, res, next) => {
+    systemMetrics.errorCount++;
+    console.error('서버 에러:', err);
+    res.status(500).json({ 
+        error: 'Internal Server Error',
+        timestamp: new Date().toISOString()
+    });
+});
+
+// 404 핸들러
+app.use((req, res) => {
+    res.status(404).json({ 
+        error: 'Not Found',
+        path: req.path,
+        timestamp: new Date().toISOString()
+    });
+});
+
+// 클러스터 모드 지원
+if (cluster.isMaster && process.env.NODE_ENV === 'production') {
+    console.log(`🚀 마스터 프로세스 ${process.pid} 시작`);
+    
+    // CPU 코어 수만큼 워커 생성
+    for (let i = 0; i < numCPUs; i++) {
+        cluster.fork();
+    }
+    
+    cluster.on('exit', (worker, code, signal) => {
+        console.log(`💥 워커 ${worker.process.pid} 종료`);
+        cluster.fork();
+    });
+    
+} else {
+    // 서버 시작
+    server.listen(PORT, HOST, () => {
+        console.log(`🚀 QuantumUnified Pro Express Server 시작`);
+        console.log(`🌐 서버 주소: http://${HOST}:${PORT}`);
+        console.log(`💻 프로세스 ID: ${process.pid}`);
+        console.log(`🔧 CPU 코어: ${numCPUs}개`);
+        console.log(`📊 메모리: ${Math.round(os.totalmem() / 1024 / 1024)}MB`);
+        
+        appendToLogFile(`Express Server started on http://${HOST}:${PORT}`);
+    });
+}
+
+// 우아한 종료
+process.on('SIGTERM', () => {
+    console.log('🛑 SIGTERM 신호 수신. 서버 종료 중...');
+    server.close(() => {
+        console.log('✅ 서버 종료 완료');
+        process.exit(0);
+    });
+});
+
+process.on('SIGINT', () => {
+    console.log('🛑 SIGINT 신호 수신. 서버 종료 중...');
+    server.close(() => {
+        console.log('✅ 서버 종료 완료');
+        process.exit(0);
+    });
+});
+
+module.exports = app;
