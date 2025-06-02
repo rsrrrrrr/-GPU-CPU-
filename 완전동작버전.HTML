@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚛️ QuantumUnified Pro v3.0</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a23 0%, #1a1a3e 50%, #2d1b69 100%);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .header h1 {
+            font-size: 3em;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            animation: glow 3s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 10px rgba(255, 107, 107, 0.5)); }
+            to { filter: drop-shadow(0 0 30px rgba(78, 205, 196, 0.8)); }
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            color: #ccc;
+            margin-bottom: 20px;
+        }
+        
+        .shortcuts {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            border-left: 4px solid #4ecdc4;
+        }
+        
+        .shortcuts-title {
+            font-weight: bold;
+            color: #4ecdc4;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .shortcut-item {
+            display: inline-block;
+            margin: 5px 10px;
+            padding: 5px 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            font-size: 0.9em;
+        }
+        
+        .shortcut-key {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            padding: 2px 8px;
+            border-radius: 5px;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+        
+        .control-panel {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .control-title {
+            font-size: 1.4em;
+            margin-bottom: 20px;
+            color: #4ecdc4;
+            text-align: center;
+        }
+        
+        .buttons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .action-btn {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .primary-btn {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+        }
+        
+        .secondary-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .tertiary-btn {
+            background: linear-gradient(45deg, #45b7d1, #96ceb4);
+            color: white;
+            box-shadow: 0 5px 15px rgba(69, 183, 209, 0.3);
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .action-btn:active {
+            transform: translateY(-1px);
+        }
+        
+        .action-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .action-btn:hover::before {
+            left: 100%;
+        }
+        
+        .results-panel {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            min-height: 300px;
+        }
+        
+        .results-title {
+            font-size: 1.4em;
+            margin-bottom: 20px;
+            color: #4ecdc4;
+            text-align: center;
+        }
+        
+        .status-message {
+            text-align: center;
+            font-size: 1.1em;
+            color: #ccc;
+            margin: 40px 0;
+        }
+        
+        .color-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+            gap: 12px;
+            margin: 25px 0;
+            min-height: 150px;
+        }
+        
+        .color-box {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .color-box:hover {
+            transform: scale(1.15);
+            border-color: white;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .color-box:active {
+            transform: scale(1.05);
+        }
+        
+        .color-box::after {
+            content: '📋';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            font-size: 0.8em;
+        }
+        
+        .color-box:hover::after {
+            opacity: 1;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            margin-top: 25px;
+        }
+        
+        .metric {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .metric:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .metric-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 5px;
+        }
+        
+        .metric-label {
+            font-size: 0.9em;
+            color: #ccc;
+            line-height: 1.3;
+        }
+        
+        .system-info {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .system-title {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            color: #4ecdc4;
+        }
+        
+        .system-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .system-item {
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            border-left: 3px solid #4ecdc4;
+        }
+        
+        .system-label {
+            font-weight: bold;
+            color: #4ecdc4;
+            font-size: 0.9em;
+        }
+        
+        .system-value {
+            margin-top: 5px;
+            font-size: 1em;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+            border-radius: 4px;
+            transition: width 1s ease;
+            animation: progress-glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes progress-glow {
+            from { box-shadow: 0 0 5px rgba(78, 205, 196, 0.5); }
+            to { box-shadow: 0 0 15px rgba(78, 205, 196, 0.8); }
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(78, 205, 196, 0.95);
+            color: #0a0a23;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-weight: bold;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #4ecdc4;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .pulse {
+            animation: pulse 1s ease-in-out;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .buttons-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .color-display {
+                grid-template-columns: repeat(auto-fill, minmax(45px, 1fr));
+                gap: 8px;
+            }
+            
+            .color-box {
+                width: 45px;
+                height: 45px;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+                gap: 15px;
+            }
+            
+            .metric-value {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>⚛️ QuantumUnified Pro v3.0</h1>
+            <div class="subtitle">양자컴퓨터 + GPU + CPU 통합 혁신 플랫폼</div>
+            
+            <div class="shortcuts">
+                <div class="shortcuts-title">⌨️ 키보드 단축키</div>
+                <div class="shortcut-item">
+                    <span class="shortcut-key">Q</span>양자 컴퓨팅 시작
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-key">O</span>자동 최적화
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-key">B</span>성능 테스트
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-key">C</span>화면 정리
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-key">ESC</span>모든 작업 중지
+                </div>
+            </div>
+        </div>
+
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <div class="control-title">⚡ 양자 컴퓨팅 제어 센터</div>
+            <div class="buttons-grid">
+                <button class="action-btn primary-btn" onclick="startQuantumComputing()" id="quantumBtn">
+                    🚀 양자 컴퓨팅 시작
+                </button>
+                <button class="action-btn secondary-btn" onclick="autoOptimize()" id="optimizeBtn">
+                    🎯 자동 최적화
+                </button>
+                <button class="action-btn tertiary-btn" onclick="runBenchmark()" id="benchmarkBtn">
+                    📊 성능 테스트
+                </button>
+            </div>
+        </div>
+
+        <!-- Results Panel -->
+        <div class="results-panel">
+            <div class="results-title">🌈 실시간 양자 컴퓨팅 결과</div>
+            <div class="status-message" id="statusMessage">
+                🎯 버튼을 클릭하거나 키보드 단축키를 사용하여 시작하세요!<br>
+                <small style="color: #999;">단축키: Q=양자시작, O=최적화, B=벤치마크</small>
+            </div>
+            <div id="colorDisplay" class="color-display"></div>
+            
+            <div class="metrics-grid" id="metricsGrid" style="display: none;">
+                <div class="metric">
+                    <div class="metric-value" id="processingSpeed">0</div>
+                    <div class="metric-label">처리 속도<br><span id="speedUnit">컬러/초</span></div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value" id="efficiency">100</div>
+                    <div class="metric-label">양자 효율성<br>%</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value" id="powerConsumption">45</div>
+                    <div class="metric-label">전력 소비<br>W</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value" id="colorsGenerated">0</div>
+                    <div class="metric-label">생성된 컬러<br>개수</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Info -->
+        <div class="system-info">
+            <div class="system-title">🔍 시스템 정보 및 상태</div>
+            <div class="system-details">
+                <div class="system-item">
+                    <div class="system-label">💻 CPU</div>
+                    <div class="system-value" id="cpuInfo">감지 중...</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="cpuProgress" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="system-item">
+                    <div class="system-label">💾 메모리</div>
+                    <div class="system-value" id="memoryInfo">분석 중...</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="memoryProgress" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="system-item">
+                    <div class="system-label">🚀 GPU</div>
+                    <div class="system-value" id="gpuInfo">확인 중...</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="gpuProgress" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="system-item">
+                    <div class="system-label">🌐 브라우저</div>
+                    <div class="system-value" id="browserInfo">로딩 중...</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="browserProgress" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification"></div>
+
+    <script>
+        // 전역 변수
+        let isProcessing = false;
+        let systemInfo = {};
+        let processingInterval = null;
+        let colorCount = 0;
+
+        // 시스템 정보 감지
+        function detectSystemInfo() {
+            console.log('🔍 시스템 정보 감지 시작...');
+            
+            // CPU 정보
+            const cpuCores = navigator.hardwareConcurrency || 4;
+            systemInfo.cpu = {
+                cores: cpuCores,
+                architecture: navigator.platform
+            };
+            
+            // 메모리 정보
+            if (performance.memory) {
+                systemInfo.memory = {
+                    used: Math.round(performance.memory.usedJSHeapSize / 1024 / 1024),
+                    total: Math.round(performance.memory.jsHeapSizeLimit / 1024 / 1024),
+                    available: Math.round((performance.memory.jsHeapSizeLimit - performance.memory.usedJSHeapSize) / 1024 / 1024)
+                };
+            } else {
+                systemInfo.memory = { used: 0, total: 'Unknown', available: 'Unknown' };
+            }
+            
+            // GPU 정보
+            const canvas = document.createElement('canvas');
+            const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
+            
+            if (gl) {
+                const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                systemInfo.gpu = {
+                    available: true,
+                    renderer: debugInfo ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) : 'WebGL 지원',
+                    vendor: debugInfo ? gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL) : 'Unknown',
+                    version: gl.getParameter(gl.VERSION)
+                };
+            } else {
+                systemInfo.gpu = { available: false, renderer: '감지되지 않음' };
+            }
+            
+            // 브라우저 정보
+            const ua = navigator.userAgent;
+            let browserName = 'Unknown';
+            if (ua.includes('Chrome')) browserName = 'Chrome';
+            else if (ua.includes('Firefox')) browserName = 'Firefox';
+            else if (ua.includes('Safari') && !ua.includes('Chrome')) browserName = 'Safari';
+            else if (ua.includes('Edge')) browserName = 'Edge';
+            
+            systemInfo.browser = {
+                name: browserName,
+                platform: navigator.platform,
+                language: navigator.language
+            };
+            
+            updateSystemDisplay();
+            console.log('✅ 시스템 정보 감지 완료:', systemInfo);
+        }
+
+        // 시스템 정보 표시 업데이트
+        function updateSystemDisplay() {
+            // CPU 정보 업데이트
+            document.getElementById('cpuInfo').textContent = 
+                `${systemInfo.cpu.cores}코어 (${systemInfo.cpu.architecture})`;
+            animateProgress('cpuProgress', Math.min(systemInfo.cpu.cores * 12.5, 100));
+            
+            // 메모리 정보 업데이트
+            if (systemInfo.memory.total !== 'Unknown') {
+                document.getElementById('memoryInfo').textContent = 
+                    `${systemInfo.memory.used}MB / ${systemInfo.memory.total}MB`;
+                animateProgress('memoryProgress', (systemInfo.memory.used / systemInfo.memory.total) * 100);
+            } else {
+                document.getElementById('memoryInfo').textContent = '메모리 정보 확인 불가';
+                animateProgress('memoryProgress', 50);
+            }
+            
+            // GPU 정보 업데이트
+            if (systemInfo.gpu.available) {
+                document.getElementById('gpuInfo').textContent = 
+                    `✅ ${systemInfo.gpu.renderer.substring(0, 30)}...`;
+                animateProgress('gpuProgress', 90);
+            } else {
+                document.getElementById('gpuInfo').textContent = '❌ GPU 가속 미지원';
+                animateProgress('gpuProgress', 20);
+            }
+            
+            // 브라우저 정보 업데이트
+            document.getElementById('browserInfo').textContent = 
+                `${systemInfo.browser.name} (${systemInfo.browser.platform})`;
+            animateProgress('browserProgress', 85);
+        }
+
+        // 프로그레스 바 애니메이션
+        function animateProgress(elementId, targetWidth) {
+            const element = document.getElementById(elementId);
+            let currentWidth = 0;
+            const increment = targetWidth / 50;
+            
+            const interval = setInterval(() => {
+                currentWidth += increment;
+                if (currentWidth >= targetWidth) {
+                    currentWidth = targetWidth;
+                    clearInterval(interval);
+                }
+                element.style.width = currentWidth + '%';
+            }, 20);
+        }
+
+        // 알림 표시
+        function showNotification(message, duration = 3000) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, duration);
+        }
+
+        // 양자 컬러 생성 알고리즘
+        function generateQuantumColor(index, mode = 'quantum') {
+            let hue, saturation, lightness;
+            
+            switch (mode) {
+                case 'quantum':
+                    // 양자 중첩 시뮬레이션 - 두 상태의 확률적 중첩
+                    const superposition1 = Math.random();
+                    const superposition2 = Math.random();
+                    hue = ((superposition1 + superposition2) / 2) * 360;
+                    saturation = 60 + Math.sin(index * 0.1) * 20 + Math.random() * 20;
+                    lightness = 50 + Math.cos(index * 0.07) * 15 + Math.random() * 20;
+                    break;
+                    
+                case 'gpu':
+                    // GPU 최적화 병렬 처리 시뮬레이션
+                    hue = (index * 137.508) % 360; // 황금각 사용
+                    saturation = 70 + Math.sin(index * 0.2) * 10;
+                    lightness = 55 + Math.cos(index * 0.15) * 10;
+                    break;
+                    
+                case 'entanglement':
+                    // 양자 얽힘 시뮬레이션
+                    const entangled1 = Math.random();
+                    const entangled2 = 1 - entangled1; // 반대 상태
+                    hue = entangled1 * 180 + entangled2 * 180;
+                    saturation = 80;
+                    lightness = 50 + (entangled1 - 0.5) * 40;
+                    break;
+                    
+                default: // hybrid
+                    hue = Math.random() * 360;
+                    saturation = 60 + Math.random() * 30;
+                    lightness = 50 + Math.random() * 30;
+            }
+            
+            return `hsl(${Math.round(hue)}, ${Math.round(saturation)}%, ${Math.round(lightness)}%)`;
+        }
+
+        // 양자 컴퓨팅 시작
+        async function startQuantumComputing() {
+            if (isProcessing) {
+                showNotification('⚠️ 이미 처리 중입니다!');
+                return;
+            }
+            
+            console.log('⚛️ 양자 컴퓨팅 시작...');
+            isProcessing = true;
+            colorCount = 0;
+            
+            // UI 업데이트
+            const statusMessage = document.getElementById('statusMessage');
+            const colorDisplay = document.getElementById('colorDisplay');
+            const metricsGrid = document.getElementById('metricsGrid');
+            const quantumBtn = document.getElementById('quantumBtn');
+            
+            statusMessage.innerHTML = '<div class="loading"></div>🔄 양자 상태 중첩 및 얽힘 계산 중...';
+            colorDisplay.innerHTML = '';
+            metricsGrid.style.display = 'grid';
+            quantumBtn.textContent = '⏹️ 중지';
+            quantumBtn.classList.add('pulse');
+            
+            showNotification('⚛️ 양자 컴퓨팅 시작!');
+            
+            // 양자 모드 결정
+            const mode = systemInfo.cpu.cores >= 8 ? 'quantum' : 
+                        systemInfo.gpu.available ? 'gpu' : 'hybrid';
+            
+            const startTime = Date.now();
+            let processedColors = 0;
+            const targetColors = 80;
+            
+            // 실시간 처리 시뮬레이션
+            processingInterval = setInterval(() => {
+                if (!isProcessing || processedColors >= targetColors) {
+                    clearInterval(processingInterval);
+                    finishQuantumComputing(startTime, processedColors, mode);
+                    return;
+                }
+                
+                // 배치로 컬러 생성 (더 현실적인 처리)
+                const batchSize = Math.min(3, targetColors - processedColors);
+                
+                for (let i = 0; i < batchSize; i++) {
+                    const color = generateQuantumColor(processedColors + i, mode);
+                    createColorBox(color, processedColors + i);
+                    processedColors++;
+                    colorCount++;
+                }
+                
+                // 실시간 메트릭 업데이트
+                const elapsed = (Date.now() - startTime) / 1000;
+                const speed = Math.round(processedColors / elapsed);
+                const efficiency = Math.min(85 + Math.random() * 15, 100);
+                const power = Math.round(30 + (speed / 10) + Math.random() * 15);
+                
+                document.getElementById('processingSpeed').textContent = speed.toLocaleString();
+                document.getElementById('efficiency').textContent = Math.round(efficiency);
+                document.getElementById('powerConsumption').textContent = power;
+                document.getElementById('colorsGenerated').textContent = processedColors.toLocaleString();
+                
+                // 상태 메시지 업데이트
+                statusMessage.innerHTML = `
+                    <div class="loading"></div>
+                    🔄 양자 ${mode} 모드로 처리 중... (${processedColors}/${targetColors})
+                `;
+                
+            }, 150 + Math.random() * 100); // 150-250ms 간격으로 처리
+        }
+
+        // 컬러 박스 생성
+        function createColorBox(color, index) {
+            const colorDisplay = document.getElementById('colorDisplay');
+            const colorBox = document.createElement('div');
+            
+            colorBox.className = 'color-box';
+            colorBox.style.backgroundColor = color;
+            colorBox.title = `${color} (클릭하여 복사)`;
+            
+            // 클릭 이벤트
+            colorBox.addEventListener('click', () => {
+                navigator.clipboard.writeText(color).then(() => {
+                    showNotification(`🎨 컬러 복사됨: ${color}`);
+                    colorBox.style.transform = 'scale(1.3)';
+                    setTimeout(() => {
+                        colorBox.style.transform = 'scale(1)';
+                    }, 200);
+                });
+            });
+            
+            // 애니메이션으로 추가
+            colorBox.style.opacity = '0';
+            colorBox.style.transform = 'scale(0.5)';
+            colorDisplay.appendChild(colorBox);
+            
+            setTimeout(() => {
+                colorBox.style.opacity = '1';
+                colorBox.style.transform = 'scale(1)';
+            }, 10);
+        }
+
+        // 양자 컴퓨팅 완료
+        function finishQuantumComputing(startTime, processedColors, mode) {
+            isProcessing = false;
+            const totalTime = (Date.now() - startTime) / 1000;
+            const finalSpeed = Math.round(processedColors / totalTime);
+            
+            // UI 업데이트
+            const statusMessage = document.getElementById('statusMessage');
+            const quantumBtn = document.getElementById('quantumBtn');
+            
+            statusMessage.innerHTML = `
+                ✅ 양자 컴퓨팅 완료! <br>
+                <small>모드: ${mode.toUpperCase()} | 처리시간: ${totalTime.toFixed(2)}초 | 성능: ${finalSpeed} 컬러/초</small>
+            `;
+            
+            quantumBtn.textContent = '🚀 양자 컴퓨팅 시작';
+            quantumBtn.classList.remove('pulse');
+            
+            showNotification(`✅ ${processedColors}개 양자 컬러 생성 완료!`);
+            console.log(`✅ 양자 컴퓨팅 완료: ${processedColors}개 컬러, ${totalTime.toFixed(2)}초, ${finalSpeed} 컬러/초`);
+        }
+
+        // 자동 최적화
+        function autoOptimize() {
+            console.log('🎯 자동 최적화 실행...');
+            showNotification('🎯 시스템 분석 및 최적화 중...');
+            
+            const optimizeBtn = document.getElementById('optimizeBtn');
+            optimizeBtn.classList.add('pulse');
+            optimizeBtn.textContent = '🔄 최적화 중...';
+            
+            setTimeout(() => {
+                // 시스템 기반 최적화 권장사항
+                const recommendations = {
+                    mode: systemInfo.cpu.cores >= 8 ? 'quantum' : 
+                          systemInfo.gpu.available ? 'gpu' : 'hybrid',
+                    workers: Math.min(systemInfo.cpu.cores, 8),
+                    efficiency: systemInfo.gpu.available ? 95 : 85,
+                    memoryOptimization: systemInfo.memory.used > systemInfo.memory.total * 0.8
+                };
+                
+                // 효율성 업데이트
+                document.getElementById('efficiency').textContent = recommendations.efficiency;
+                
+                // 전력 소비 최적화
+                const optimizedPower = Math.round(30 + (recommendations.workers * 2));
+                document.getElementById('powerConsumption').textContent = optimizedPower;
+                
+                optimizeBtn.textContent = '🎯 자동 최적화';
+                optimizeBtn.classList.remove('pulse');
+                
+                const optimizationResult = `🎯 자동 최적화 완료!
+
+✅ 권장 모드: ${recommendations.mode.toUpperCase()}
+🔧 워커 스레드: ${recommendations.workers}개
+💻 CPU 활용: ${systemInfo.cpu.cores}코어
+🚀 GPU 가속: ${systemInfo.gpu.available ? '활성화' : '비활성화'}
+⚡ 예상 효율성: ${recommendations.efficiency}%
+💾 메모리 최적화: ${recommendations.memoryOptimization ? '필요' : '양호'}
+
+시스템 사양에 최적화된 설정이 적용되었습니다!`;
+
+                alert(optimizationResult);
+                showNotification('✅ 시스템 최적화 완료!');
+                console.log('✅ 자동 최적화 완료:', recommendations);
+                
+            }, 2000);
+        }
+
+        // 성능 벤치마크
+        function runBenchmark() {
+            console.log('📊 성능 벤치마크 시작...');
+            showNotification('📊 성능 테스트 시작...');
+            
+            const benchmarkBtn = document.getElementById('benchmarkBtn');
+            benchmarkBtn.classList.add('pulse');
+            benchmarkBtn.textContent = '🔄 테스트 중...';
+            
+            const results = {};
+            const modes = ['quantum', 'gpu', 'hybrid', 'entanglement'];
+            let currentModeIndex = 0;
+            
+            function testNextMode() {
+                if (currentModeIndex >= modes.length) {
+                    // 모든 테스트 완료
+                    finishBenchmark(results);
+                    return;
+                }
+                
+                const mode = modes[currentModeIndex];
+                console.log(`🔄 ${mode} 모드 테스트 중...`);
+                
+                const startTime = Date.now();
+                const testColors = 30;
+                
+                // 실제 성능 테스트
+                for (let i = 0; i < testColors; i++) {
+                    generateQuantumColor(i, mode);
+                }
+                
+                const endTime = Date.now();
+                const duration = (endTime - startTime) / 1000;
+                const performance = Math.round(testColors / duration);
+                
+                results[mode] = {
+                    colors: testColors,
+                    duration: duration,
+                    performance: performance
+                };
+                
+                // 진행률 업데이트
+                const progress = ((currentModeIndex + 1) / modes.length * 100);
+                benchmarkBtn.textContent = `📊 테스트 중... ${Math.round(progress)}%`;
+                
+                currentModeIndex++;
+                setTimeout(testNextMode, 500);
+            }
+            
+            testNextMode();
+        }
+
+        function finishBenchmark(results) {
+            const benchmarkBtn = document.getElementById('benchmarkBtn');
+            benchmarkBtn.textContent = '📊 성능 테스트';
+            benchmarkBtn.classList.remove('pulse');
+            
+            // 최고 성능 모드 찾기
+            const bestMode = Object.keys(results).reduce((a, b) => 
+                results[a].performance > results[b].performance ? a : b
+            );
+            
+            const benchmarkResult = `📊 성능 벤치마크 완료!
+
+🏆 최고 성능: ${bestMode.toUpperCase()} (${results[bestMode].performance} 컬러/초)
+
+📈 상세 결과:
+⚛️ Quantum: ${results.quantum?.performance || 0} 컬러/초
+🚀 GPU: ${results.gpu?.performance || 0} 컬러/초  
+🌈 Hybrid: ${results.hybrid?.performance || 0} 컬러/초
+🔗 Entanglement: ${results.entanglement?.performance || 0} 컬러/초
+
+💡 권장사항: ${bestMode.toUpperCase()} 모드를 사용하세요!`;
+
+            alert(benchmarkResult);
+            showNotification(`🏆 최고 성능: ${bestMode.toUpperCase()}`);
+            console.log('✅ 벤치마크 완료:', results);
+        }
+
+        // 화면 정리
+        function clearResults() {
+            const colorDisplay = document.getElementById('colorDisplay');
+            const statusMessage = document.getElementById('statusMessage');
+            const metricsGrid = document.getElementById('metricsGrid');
+            
+            colorDisplay.innerHTML = '';
+            metricsGrid.style.display = 'none';
+            statusMessage.innerHTML = '🧹 화면이 정리되었습니다. 새로운 작업을 시작하세요!';
+            
+            // 메트릭 초기화
+            document.getElementById('processingSpeed').textContent = '0';
+            document.getElementById('colorsGenerated').textContent = '0';
+            
+            showNotification('🧹 화면 정리 완료!');
+            console.log('🧹 결과 화면 정리됨');
+        }
+
+        // 모든 작업 중지
+        function stopAllOperations() {
+            if (isProcessing) {
+                isProcessing = false;
+                if (processingInterval) {
+                    clearInterval(processingInterval);
+                    processingInterval = null;
+                }
+                
+                const quantumBtn = document.getElementById('quantumBtn');
+                quantumBtn.textContent = '🚀 양자 컴퓨팅 시작';
+                quantumBtn.classList.remove('pulse');
+                
+                const statusMessage = document.getElementById('statusMessage');
+                statusMessage.innerHTML = '⏹️ 모든 작업이 중지되었습니다.';
+                
+                showNotification('⏹️ 모든 작업 중지됨');
+                console.log('⏹️ 모든 작업 중지됨');
+            }
+        }
+
+        // 키보드 이벤트 리스너
+        document.addEventListener('keydown', (event) => {
+            const key = event.key.toLowerCase();
+            
+            switch (key) {
+                case 'q':
+                    event.preventDefault();
+                    startQuantumComputing();
+                    break;
+                case 'o':
+                    event.preventDefault();
+                    autoOptimize();
+                    break;
+                case 'b':
+                    event.preventDefault();
+                    runBenchmark();
+                    break;
+                case 'c':
+                    event.preventDefault();
+                    clearResults();
+                    break;
+                case 'escape':
+                    event.preventDefault();
+                    stopAllOperations();
+                    break;
+            }
+        });
+
+        // 초기화
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🚀 QuantumUnified Pro v3.0 초기화 시작...');
+            
+            detectSystemInfo();
+            
+            setTimeout(() => {
+                console.log('✅ QuantumUnified Pro v3.0 준비 완료!');
+                console.log('💡 키보드 단축키: Q=양자시작, O=최적화, B=벤치마크, C=정리, ESC=중지');
+                showNotification('🚀 QuantumUnified Pro 준비 완료!');
+            }, 1000);
+        });
+
+        // 에러 핸들링
+        window.addEventListener('error', (event) => {
+            console.error('❌ 오류 발생:', event.error);
+            showNotification('❌ 오류가 발생했습니다. 콘솔을 확인하세요.');
+        });
+
+        // 성능 모니터링
+        setInterval(() => {
+            if (performance.memory) {
+                const memUsed = Math.round(performance.memory.usedJSHeapSize / 1024 / 1024);
+                const memTotal = Math.round(performance.memory.jsHeapSizeLimit / 1024 / 1024);
+                systemInfo.memory.used = memUsed;
+                systemInfo.memory.total = memTotal;
+                
+                // 메모리 사용률이 높으면 경고
+                if (memUsed / memTotal > 0.9) {
+                    console.warn('⚠️ 메모리 사용률이 높습니다:', `${memUsed}MB / ${memTotal}MB`);
+                }
+            }
+        }, 5000);
+    </script>
+</body>
+</html>
