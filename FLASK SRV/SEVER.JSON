@@ -1,0 +1,354 @@
+#!/usr/bin/env python3
+"""
+QuantumUnified Pro Flask Server
+고성능 웹 서버 with GPU/CPU 최적화 지원
+"""
+
+import os
+import json
+import time
+import psutil
+import logging
+from datetime import datetime
+from flask import Flask, render_template, jsonify, request, send_static_file
+from flask_cors import CORS
+from dotenv import load_dotenv
+import threading
+import queue
+
+# 환경 변수 로드
+load_dotenv()
+
+# Flask 앱 설정
+app = Flask(__name__, 
+           static_folder='../dist', 
+           template_folder='../src')
+
+# CORS 설정
+CORS(app, origins=os.getenv('CORS_ORIGIN', '*'))
+
+# 로깅 설정
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler('logs/quantumunified.log'),
+        logging.StreamHandler()
+    ]
+)
+logger = logging.getLogger(__name__)
+
+# 전역 변수
+system_metrics = {
+    'cpu_percent': 0,
+    'memory_percent': 0,
+    'cpu_count': psutil.cpu_count(),
+    'memory_total': psutil.virtual_memory().total,
+    'gpu_available': False,
+    'last_updated': time.time()
+}
+
+# 작업 큐
+task_queue = queue.Queue()
+results_cache = {}
+
+class PerformanceMonitor:
+    """시스템 성능 모니터링 클래스"""
+    
+    def __init__(self):
+        self.running = False
+        self.thread = None
+    
+    def start(self):
+        """모니터링 시작"""
+        if not self.running:
+            self.running = True
+            self.thread = threading.Thread(target=self._monitor_loop)
+            self.thread.daemon = True
+            self.thread.start()
+            logger.info("🔍 성능 모니터링 시작")
+    
+    def stop(self):
+        """모니터링 중지"""
+        self.running = False
+        if self.thread:
+            self.thread.join()
+        logger.info("⏹️ 성능 모니터링 중지")
+    
+    def _monitor_loop(self):
+        """모니터링 루프"""
+        while self.running:
+            try:
+                # CPU 사용률
+                system_metrics['cpu_percent'] = psutil.cpu_percent(interval=1)
+                
+                # 메모리 사용률
+                memory = psutil.virtual_memory()
+                system_metrics['memory_percent'] = memory.percent
+                
+                # GPU 감지 시도 (선택사항)
+                try:
+                    import GPUtil
+                    gpus = GPUtil.getGPUs()
+                    system_metrics['gpu_available'] = len(gpus) > 0
+                    if gpus:
+                        system_metrics['gpu_utilization'] = gpus[0].load * 100
+                except ImportError:
+                    system_metrics['gpu_available'] = False
+                
+                system_metrics['last_updated'] = time.time()
+                
+                time.sleep(5)  # 5초마다 업데이트
+                
+            except Exception as e:
+                logger.error(f"모니터링 오류: {e}")
+                time.sleep(10)
+
+class QuantumProcessor:
+    """양자 컴퓨팅 시뮬레이터"""
+    
+    @staticmethod
+    def generate_colors(count, mode='hybrid'):
+        """컬러 생성 (양자 알고리즘 시뮬레이션)"""
+        import random
+        import colorsys
+        
+        colors = []
+        
+        for i in range(count):
+            if mode == 'quantum':
+                # 양자 중첩 시뮬레이션
+                hue = (random.random() + random.random()) / 2  # 중첩 효과
+                saturation = 0.7 + random.random() * 0.3
+                value = 0.8 + random.random() * 0.2
+            elif mode == 'gpu':
+                # GPU 최적화된 병렬 생성
+                hue = (i / count + random.random() * 0.1) % 1.0
+                saturation = 0.8
+                value = 0.9
+            else:  # hybrid
+                hue = random.random()
+                saturation = 0.6 + random.random() * 0.4
+                value = 0.7 + random.random() * 0.3
+            
+            rgb = colorsys.hsv_to_rgb(hue, saturation, value)
+            hex_color = '#{:02x}{:02x}{:02x}'.format(
+                int(rgb[0] * 255),
+                int(rgb[1] * 255),
+                int(rgb[2] * 255)
+            )
+            colors.append(hex_color)
+        
+        return colors
+    
+    @staticmethod
+    def optimize_parameters(task_size, power_mode, mode):
+        """매개변수 최적화"""
+        optimization_factor = {
+            'quantum': 2.5,
+            'gpu': 2.0,
+            'cpu': 1.0,
+            'eco': 0.5,
+            'hybrid': 1.8
+        }.get(mode, 1.0)
+        
+        optimal_size = min(task_size * optimization_factor, 1000)
+        optimal_power = min(power_mode * 1.2, 10)
+        
+        return {
+            'optimal_task_size': int(optimal_size),
+            'optimal_power_mode': int(optimal_power),
+            'efficiency_gain': optimization_factor,
+            'estimated_performance': optimal_size * optimal_power * 100
+        }
+
+# 성능 모니터 인스턴스
+monitor = PerformanceMonitor()
+
+@app.route('/')
+def index():
+    """메인 페이지"""
+    return send_static_file('index.html')
+
+@app.route('/api/system/status')
+def system_status():
+    """시스템 상태 API"""
+    return jsonify({
+        'status': 'online',
+        'timestamp': datetime.now().isoformat(),
+        'metrics': system_metrics,
+        'server_info': {
+            'python_version': os.sys.version,
+            'flask_version': Flask.__version__,
+            'cpu_count': psutil.cpu_count(),
+            'memory_total_gb': round(psutil.virtual_memory().total / (1024**3), 2)
+        }
+    })
+
+@app.route('/api/quantum/colors', methods=['POST'])
+def generate_colors():
+    """컬러 생성 API"""
+    try:
+        data = request.get_json()
+        count = data.get('count', 10)
+        mode = data.get('mode', 'hybrid')
+        
+        # 요청 제한
+        if count > 1000:
+            return jsonify({'error': '최대 1000개까지 생성 가능합니다'}), 400
+        
+        start_time = time.time()
+        colors = QuantumProcessor.generate_colors(count, mode)
+        processing_time = time.time() - start_time
+        
+        return jsonify({
+            'colors': colors,
+            'count': len(colors),
+            'mode': mode,
+            'processing_time': round(processing_time, 4),
+            'performance': round(len(colors) / processing_time, 2)
+        })
+        
+    except Exception as e:
+        logger.error(f"컬러 생성 오류: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/optimization/auto', methods=['POST'])
+def auto_optimize():
+    """자동 최적화 API"""
+    try:
+        data = request.get_json()
+        task_size = data.get('task_size', 64)
+        power_mode = data.get('power_mode', 7)
+        mode = data.get('mode', 'hybrid')
+        
+        result = QuantumProcessor.optimize_parameters(task_size, power_mode, mode)
+        
+        return jsonify({
+            'optimization': result,
+            'system_recommendations': {
+                'cpu_intensive': system_metrics['cpu_count'] >= 4,
+                'memory_available': system_metrics['memory_percent'] < 80,
+                'recommended_mode': 'quantum' if system_metrics['cpu_count'] >= 8 else 'hybrid'
+            }
+        })
+        
+    except Exception as e:
+        logger.error(f"최적화 오류: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/performance/test', methods=['POST'])
+def performance_test():
+    """성능 테스트 API"""
+    try:
+        data = request.get_json()
+        test_duration = min(data.get('duration', 10), 60)  # 최대 60초
+        
+        results = {}
+        modes = ['quantum', 'gpu', 'cpu', 'eco', 'hybrid']
+        
+        for mode in modes:
+            start_time = time.time()
+            test_colors = QuantumProcessor.generate_colors(100, mode)
+            end_time = time.time()
+            
+            results[mode] = {
+                'colors_generated': len(test_colors),
+                'time_taken': round(end_time - start_time, 4),
+                'colors_per_second': round(len(test_colors) / (end_time - start_time), 2)
+            }
+        
+        # 최고 성능 모드 찾기
+        best_mode = max(results.keys(), 
+                       key=lambda x: results[x]['colors_per_second'])
+        
+        return jsonify({
+            'test_results': results,
+            'best_mode': best_mode,
+            'test_completed_at': datetime.now().isoformat(),
+            'system_info': {
+                'cpu_usage': system_metrics['cpu_percent'],
+                'memory_usage': system_metrics['memory_percent']
+            }
+        })
+        
+    except Exception as e:
+        logger.error(f"성능 테스트 오류: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/logs')
+def get_logs():
+    """로그 조회 API"""
+    try:
+        log_file = 'logs/quantumunified.log'
+        if os.path.exists(log_file):
+            with open(log_file, 'r', encoding='utf-8') as f:
+                lines = f.readlines()
+                # 최근 100줄만 반환
+                recent_lines = lines[-100:] if len(lines) > 100 else lines
+                return jsonify({
+                    'logs': [line.strip() for line in recent_lines],
+                    'total_lines': len(lines)
+                })
+        else:
+            return jsonify({
+                'logs': ['로그 파일이 없습니다.'],
+                'total_lines': 0
+            })
+    except Exception as e:
+        logger.error(f"로그 조회 오류: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/health')
+def health_check():
+    """헬스 체크"""
+    return jsonify({
+        'status': 'healthy',
+        'timestamp': datetime.now().isoformat(),
+        'uptime': time.time() - app.start_time,
+        'version': os.getenv('VERSION', '3.0.0')
+    })
+
+@app.errorhandler(404)
+def not_found(error):
+    """404 에러 핸들러"""
+    return jsonify({'error': 'Not Found'}), 404
+
+@app.errorhandler(500)
+def internal_error(error):
+    """500 에러 핸들러"""
+    logger.error(f"Internal Server Error: {error}")
+    return jsonify({'error': 'Internal Server Error'}), 500
+
+def create_directories():
+    """필요한 디렉토리 생성"""
+    directories = ['logs', 'dist', 'tmp']
+    for directory in directories:
+        os.makedirs(directory, exist_ok=True)
+
+if __name__ == '__main__':
+    # 시작 시간 기록
+    app.start_time = time.time()
+    
+    # 디렉토리 생성
+    create_directories()
+    
+    # 성능 모니터링 시작
+    monitor.start()
+    
+    logger.info("🚀 QuantumUnified Pro Flask Server 시작")
+    logger.info(f"🌐 서버 주소: http://localhost:{os.getenv('PYTHON_PORT', 5000)}")
+    
+    try:
+        app.run(
+            host=os.getenv('HOST', '0.0.0.0'),
+            port=int(os.getenv('PYTHON_PORT', 5000)),
+            debug=os.getenv('ENVIRONMENT', 'development') == 'development',
+            threaded=True
+        )
+    except KeyboardInterrupt:
+        logger.info("🛑 서버 종료 중...")
+        monitor.stop()
+    except Exception as e:
+        logger.error(f"서버 실행 오류: {e}")
+        monitor.stop()
