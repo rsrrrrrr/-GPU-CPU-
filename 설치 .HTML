@@ -1,0 +1,80 @@
+
+🚀 단계별 설치 가이드
+1. 가상환경 생성 및 활성화
+bash# Python 가상환경 생성
+python3 -m venv venv
+
+# 활성화 (Linux/macOS)
+source venv/bin/activate
+
+# 활성화 (Windows)
+venv\Scripts\activate
+2. pip 업그레이드
+bashpython -m pip install --upgrade pip
+3. 패키지 설치
+bash# 기본 패키지
+pip install Flask Flask-CORS psutil python-dotenv
+
+# 추가 패키지
+pip install numpy Pillow requests gunicorn watchdog
+
+# 개발 도구
+pip install pytest black flake8
+4. requirements.txt로 일괄 설치
+bash# requirements.txt 생성
+cat > requirements.txt << EOF
+Flask==2.3.3
+Flask-CORS==4.0.0
+gunicorn==21.2.0
+python-dotenv==1.0.0
+psutil==5.9.5
+numpy==1.24.3
+Pillow==10.0.1
+requests==2.31.0
+watchdog==3.0.0
+redis==4.6.0
+celery==5.3.1
+pytest==7.4.2
+black==23.7.0
+flake8==6.0.0
+EOF
+
+# 일괄 설치
+pip install -r requirements.txt
+
+🔧 패키지별 용도
+패키지용도설치 명령어Flask웹 서버 프레임워크pip install FlaskFlask-CORSCORS 처리pip install Flask-CORSpsutil시스템 리소스 모니터링pip install psutilpython-dotenv환경변수 관리pip install python-dotenvnumpy수치 계산pip install numpyrequestsHTTP 요청pip install requestsgunicornWSGI 서버pip install gunicornPillow이미지 처리pip install Pillowredis캐싱/세션 관리pip install redispytest테스트 프레임워크pip install pytest
+
+🎯 최소 설치 (핵심만)
+bash# 기본 동작에 필요한 최소 패키지
+pip install Flask Flask-CORS psutil
+🚀 권장 설치 (모든 기능)
+bash# 모든 기능을 위한 완전 설치
+pip install Flask Flask-CORS gunicorn python-dotenv psutil numpy Pillow requests watchdog redis celery pytest black flake8
+🔍 설치 확인
+bash# 설치된 패키지 확인
+pip list
+
+# 특정 패키지 확인
+pip show Flask
+
+# 버전 확인
+python -c "import Flask; print(Flask.__version__)"
+
+⚠️ 문제 해결
+권한 오류 시
+bashpip install --user Flask Flask-CORS psutil
+캐시 클리어
+bashpip install --no-cache-dir Flask
+특정 버전 설치
+bashpip install Flask==2.3.3
+업그레이드
+bashpip install --upgrade Flask
+
+💡 빠른 체크리스트
+실행 전 이 명령어들이 에러 없이 동작하는지 확인:
+bashpython -c "import flask; print('✅ Flask OK')"
+python -c "import flask_cors; print('✅ Flask-CORS OK')"
+python -c "import psutil; print('✅ psutil OK')"
+python -c "import dotenv; print('✅ python-dotenv OK')"
+모든 항목에서 "✅ OK"가 나오면 설치 완료! 🎉
