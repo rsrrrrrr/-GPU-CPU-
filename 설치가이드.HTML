@@ -1,0 +1,601 @@
+# 🚀 QuantumUnified Pro v3.0 설치 가이드
+
+## 📋 목차
+1. [시스템 요구사항](#시스템-요구사항)
+2. [빠른 설치 (로컬)](#빠른-설치-로컬)
+3. [웹 서버 배포](#웹-서버-배포)
+4. [개발 환경 설정](#개발-환경-설정)
+5. [성능 최적화](#성능-최적화)
+6. [트러블슈팅](#트러블슈팅)
+
+---
+
+## 🔧 시스템 요구사항
+
+### 최소 요구사항
+- **브라우저**: Chrome 80+, Firefox 75+, Safari 13.1+, Edge 80+
+- **RAM**: 4GB 이상
+- **CPU**: 2코어 이상
+- **GPU**: WebGL 2.0 지원 필수
+
+### 권장 요구사항
+- **브라우저**: Chrome 최신 버전 (WebGPU 지원)
+- **RAM**: 8GB 이상
+- **CPU**: 4코어 이상 (멀티스레딩 최적화)
+- **GPU**: 전용 그래픽카드 (NVIDIA/AMD)
+- **디스크**: 100MB 여유 공간
+
+---
+
+## ⚡ 빠른 설치 (로컬)
+
+### 방법 1: 단일 HTML 파일 (권장)
+
+```bash
+# 1. 프로젝트 폴더 생성
+mkdir quantumunified-pro
+cd quantumunified-pro
+
+# 2. HTML 파일 다운로드 (위의 artifact 코드를 index.html로 저장)
+# 또는 직접 생성:
+nano index.html
+```
+
+```html
+<!-- artifact의 전체 HTML 코드를 여기에 복사 -->
+```
+
+```bash
+# 3. 로컬 서버 실행
+python -m http.server 8080
+# 또는
+npx http-server -p 8080
+# 또는
+php -S localhost:8080
+```
+
+```bash
+# 4. 브라우저에서 접속
+http://localhost:8080
+```
+
+### 방법 2: 웹 브라우저 직접 실행
+
+```bash
+# HTML 파일을 브라우저로 직접 열기
+# 파일 > 열기 > index.html 선택
+# 또는 파일을 브라우저 창에 드래그&드롭
+```
+
+---
+
+## 🌐 웹 서버 배포
+
+### Apache 배포
+
+```bash
+# 1. Apache 가상 호스트 설정
+sudo nano /etc/apache2/sites-available/quantumunified.conf
+```
+
+```apache
+<VirtualHost *:80>
+    ServerName quantumunified.local
+    DocumentRoot /var/www/quantumunified
+    
+    # WebGL/GPU 최적화 헤더
+    Header set Cross-Origin-Embedder-Policy "require-corp"
+    Header set Cross-Origin-Opener-Policy "same-origin"
+    
+    # 캐싱 최적화
+    <FilesMatch "\.(js|css|png|jpg|jpeg|gif|ico|svg)$">
+        ExpiresActive On
+        ExpiresDefault "access plus 1 month"
+    </FilesMatch>
+    
+    # 압축 활성화
+    <Location />
+        SetOutputFilter DEFLATE
+    </Location>
+</VirtualHost>
+```
+
+```bash
+# 2. 사이트 활성화
+sudo a2ensite quantumunified
+sudo systemctl reload apache2
+
+# 3. 파일 배포
+sudo cp index.html /var/www/quantumunified/
+sudo chown -R www-data:www-data /var/www/quantumunified
+```
+
+### Nginx 배포
+
+```bash
+# 1. Nginx 설정
+sudo nano /etc/nginx/sites-available/quantumunified
+```
+
+```nginx
+server {
+    listen 80;
+    server_name quantumunified.local;
+    root /var/www/quantumunified;
+    index index.html;
+    
+    # WebGL/GPU 최적화
+    add_header Cross-Origin-Embedder-Policy "require-corp";
+    add_header Cross-Origin-Opener-Policy "same-origin";
+    
+    # 정적 파일 캐싱
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg)$ {
+        expires 1M;
+        add_header Cache-Control "public, immutable";
+    }
+    
+    # Gzip 압축
+    gzip on;
+    gzip_vary on;
+    gzip_min_length 1024;
+    gzip_types text/plain text/css application/json application/javascript text/xml application/xml;
+}
+```
+
+```bash
+# 2. 설정 활성화
+sudo ln -s /etc/nginx/sites-available/quantumunified /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+### Docker 배포
+
+```dockerfile
+# Dockerfile
+FROM nginx:alpine
+
+# 애플리케이션 복사
+COPY index.html /usr/share/nginx/html/
+
+# Nginx 설정 최적화
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# 포트 노출
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
+```
+
+```yaml
+# docker-compose.yml
+version: '3.8'
+services:
+  quantumunified:
+    build: .
+    ports:
+      - "8080:80"
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
+```
+
+```bash
+# 실행
+docker-compose up -d
+```
+
+---
+
+## 💻 개발 환경 설정
+
+### Node.js 기반 개발 환경
+
+```bash
+# 1. 프로젝트 초기화
+npm init -y
+
+# 2. 개발 의존성 설치
+npm install --save-dev \
+  live-server \
+  terser \
+  html-minifier \
+  cssnano \
+  webpack \
+  webpack-cli \
+  webpack-dev-server
+```
+
+```json
+// package.json 스크립트 추가
+{
+  "scripts": {
+    "dev": "live-server --port=8080 --host=localhost",
+    "build": "npm run minify-html && npm run minify-css && npm run minify-js",
+    "minify-html": "html-minifier --collapse-whitespace --remove-comments --minify-css --minify-js index.html -o dist/index.html",
+    "minify-js": "terser src/script.js -o dist/script.min.js -c -m",
+    "serve": "webpack serve --mode development",
+    "build-prod": "webpack --mode production"
+  }
+}
+```
+
+### 성능 모니터링 설정
+
+```javascript
+// performance-monitor.js
+class PerformanceMonitor {
+    constructor() {
+        this.metrics = {
+            fps: 0,
+            memoryUsage: 0,
+            gpuUtilization: 0,
+            cpuUsage: 0
+        };
+        
+        this.startMonitoring();
+    }
+    
+    startMonitoring() {
+        // FPS 모니터링
+        let frameCount = 0;
+        let lastTime = performance.now();
+        
+        const countFPS = () => {
+            frameCount++;
+            const currentTime = performance.now();
+            
+            if (currentTime >= lastTime + 1000) {
+                this.metrics.fps = Math.round((frameCount * 1000) / (currentTime - lastTime));
+                frameCount = 0;
+                lastTime = currentTime;
+            }
+            
+            requestAnimationFrame(countFPS);
+        };
+        
+        requestAnimationFrame(countFPS);
+        
+        // 메모리 모니터링
+        setInterval(() => {
+            if (performance.memory) {
+                this.metrics.memoryUsage = Math.round(
+                    performance.memory.usedJSHeapSize / 1048576
+                );
+            }
+        }, 1000);
+    }
+    
+    getMetrics() {
+        return this.metrics;
+    }
+}
+
+// 사용법
+const monitor = new PerformanceMonitor();
+setInterval(() => {
+    console.log('Performance:', monitor.getMetrics());
+}, 5000);
+```
+
+---
+
+## ⚡ 성능 최적화
+
+### 1. 브라우저 최적화 플래그
+
+```bash
+# Chrome 최적화 실행
+google-chrome \
+  --enable-gpu-rasterization \
+  --enable-zero-copy \
+  --enable-features=VaapiVideoDecoder \
+  --use-gl=desktop \
+  --enable-hardware-overlays \
+  --max_old_space_size=4096
+```
+
+### 2. WebGL 최적화 설정
+
+```javascript
+// webgl-optimization.js
+function optimizeWebGL() {
+    const canvas = document.createElement('canvas');
+    const gl = canvas.getContext('webgl2', {
+        alpha: false,                    // 투명도 비활성화
+        antialias: false,               // 안티앨리어싱 비활성화
+        depth: false,                   // 깊이 버퍼 비활성화
+        failIfMajorPerformanceCaveat: false,
+        powerPreference: "high-performance",
+        premultipliedAlpha: false,
+        preserveDrawingBuffer: false,
+        stencil: false
+    });
+    
+    // GPU 정보 확인
+    const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+    if (debugInfo) {
+        console.log('GPU:', gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL));
+        console.log('Driver:', gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL));
+    }
+    
+    return gl;
+}
+```
+
+### 3. CPU 멀티스레딩 최적화
+
+```javascript
+// worker-pool.js
+class WorkerPool {
+    constructor(workerScript, poolSize = navigator.hardwareConcurrency) {
+        this.workers = [];
+        this.taskQueue = [];
+        this.availableWorkers = [];
+        
+        // 워커 풀 생성
+        for (let i = 0; i < poolSize; i++) {
+            const worker = new Worker(workerScript);
+            worker._id = i;
+            worker._busy = false;
+            
+            worker.onmessage = (e) => {
+                this.handleWorkerMessage(worker, e);
+            };
+            
+            this.workers.push(worker);
+            this.availableWorkers.push(worker);
+        }
+    }
+    
+    execute(data) {
+        return new Promise((resolve, reject) => {
+            const task = { data, resolve, reject };
+            
+            if (this.availableWorkers.length > 0) {
+                this.assignTask(task);
+            } else {
+                this.taskQueue.push(task);
+            }
+        });
+    }
+    
+    assignTask(task) {
+        const worker = this.availableWorkers.pop();
+        worker._busy = true;
+        worker._currentTask = task;
+        worker.postMessage(task.data);
+    }
+    
+    handleWorkerMessage(worker, event) {
+        const task = worker._currentTask;
+        worker._busy = false;
+        worker._currentTask = null;
+        
+        if (event.data.error) {
+            task.reject(new Error(event.data.error));
+        } else {
+            task.resolve(event.data.result);
+        }
+        
+        this.availableWorkers.push(worker);
+        
+        if (this.taskQueue.length > 0) {
+            this.assignTask(this.taskQueue.shift());
+        }
+    }
+}
+```
+
+### 4. 메모리 최적화
+
+```javascript
+// memory-optimizer.js
+class MemoryOptimizer {
+    constructor() {
+        this.objectPool = new Map();
+        this.gcThreshold = 100 * 1024 * 1024; // 100MB
+        
+        this.startMemoryMonitoring();
+    }
+    
+    // 객체 풀링
+    getObject(type, ...args) {
+        if (!this.objectPool.has(type)) {
+            this.objectPool.set(type, []);
+        }
+        
+        const pool = this.objectPool.get(type);
+        
+        if (pool.length > 0) {
+            return pool.pop();
+        }
+        
+        return this.createObject(type, ...args);
+    }
+    
+    releaseObject(type, obj) {
+        // 객체 재사용을 위한 초기화
+        this.resetObject(obj);
+        
+        const pool = this.objectPool.get(type) || [];
+        if (pool.length < 100) { // 풀 크기 제한
+            pool.push(obj);
+        }
+    }
+    
+    startMemoryMonitoring() {
+        setInterval(() => {
+            if (performance.memory && 
+                performance.memory.usedJSHeapSize > this.gcThreshold) {
+                this.forceGC();
+            }
+        }, 5000);
+    }
+    
+    forceGC() {
+        if (window.gc) {
+            window.gc();
+        }
+        
+        // 객체 풀 정리
+        for (const [type, pool] of this.objectPool) {
+            if (pool.length > 50) {
+                pool.splice(50);
+            }
+        }
+    }
+}
+```
+
+---
+
+## 🔧 트러블슈팅
+
+### 일반적인 문제 해결
+
+#### 1. WebGL 관련 오류
+
+```bash
+# 문제: WebGL context lost
+# 해결책: GPU 드라이버 업데이트 또는 하드웨어 가속 재활성화
+
+# Chrome의 경우
+chrome://settings/system
+# "하드웨어 가속 사용" 활성화
+
+# Firefox의 경우
+about:config
+# webgl.force-enabled = true
+```
+
+#### 2. 성능 저하 문제
+
+```javascript
+// 성능 진단 도구
+function performanceDiagnostic() {
+    const results = {
+        webgl2Support: !!document.createElement('canvas').getContext('webgl2'),
+        hardwareConcurrency: navigator.hardwareConcurrency,
+        memoryInfo: performance.memory,
+        connectionType: navigator.connection?.effectiveType,
+        devicePixelRatio: window.devicePixelRatio
+    };
+    
+    console.table(results);
+    
+    // 권장사항 제공
+    if (!results.webgl2Support) {
+        console.warn('⚠️ WebGL 2.0이 지원되지 않습니다. 브라우저를 업데이트하세요.');
+    }
+    
+    if (results.hardwareConcurrency < 4) {
+        console.warn('⚠️ CPU 코어가 부족합니다. 절전 모드를 사용하세요.');
+    }
+    
+    return results;
+}
+```
+
+#### 3. 메모리 누수 해결
+
+```javascript
+// 메모리 누수 감지
+function detectMemoryLeaks() {
+    const baseline = performance.memory.usedJSHeapSize;
+    
+    setTimeout(() => {
+        const current = performance.memory.usedJSHeapSize;
+        const growth = current - baseline;
+        
+        if (growth > 50 * 1024 * 1024) { // 50MB 증가
+            console.warn(`⚠️ 메모리 누수 감지: ${growth / 1024 / 1024}MB 증가`);
+            
+            // 자동 정리 실행
+            if (window.gc) window.gc();
+        }
+    }, 60000); // 1분 후 체크
+}
+```
+
+### 환경별 최적화 설정
+
+#### 모바일 최적화
+
+```css
+/* 모바일 디바이스 최적화 */
+@media (max-width: 768px) {
+    .container {
+        padding: 5px;
+    }
+    
+    .status-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    
+    .color-display {
+        grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+    }
+}
+
+/* 고DPI 디스플레이 최적화 */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .color-box {
+        border-width: 1px;
+    }
+}
+```
+
+#### 저사양 디바이스 최적화
+
+```javascript
+// 저사양 디바이스 감지 및 최적화
+function optimizeForLowEndDevices() {
+    const isLowEnd = (
+        navigator.hardwareConcurrency < 4 ||
+        (performance.memory && performance.memory.jsHeapSizeLimit < 1073741824) // 1GB 미만
+    );
+    
+    if (isLowEnd) {
+        // 저사양 최적화 모드
+        document.body.classList.add('low-end-mode');
+        
+        // 애니메이션 줄이기
+        document.documentElement.style.setProperty('--animation-duration', '0.1s');
+        
+        // 자동으로 절전 모드 설정
+        setMode('eco');
+        
+        console.info('🔋 저사양 디바이스 감지 - 절전 모드 활성화');
+    }
+}
+```
+
+---
+
+## 🎯 배포 체크리스트
+
+- [ ] WebGL 2.0 지원 확인
+- [ ] HTTPS 설정 (Service Worker 사용 시)
+- [ ] 적절한 CORS 헤더 설정
+- [ ] Gzip/Brotli 압축 활성화
+- [ ] 캐싱 전략 구현
+- [ ] 성능 모니터링 도구 설정
+- [ ] 오류 추적 시스템 구현
+- [ ] 모바일 반응형 테스트
+- [ ] 다양한 브라우저 호환성 테스트
+- [ ] 로드 테스트 수행
+
+---
+
+## 📞 지원 및 문의
+
+- **GitHub**: [링크 예정]
+- **문서**: [링크 예정]  
+- **이슈 트래커**: [링크 예정]
+- **커뮤니티**: [링크 예정]
+
+---
+
+**🚀 QuantumUnified Pro로 차세대 컴퓨팅을 경험하세요!**
