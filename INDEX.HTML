@@ -421,22 +421,22 @@
             <div class="control-section">
                 <h3>⚡ 컴퓨팅 모드</h3>
                 <div class="mode-buttons">
-                    <button class="mode-btn active" onclick="setMode('hybrid')">🌈 하이브리드 (최적)</button>
-                    <button class="mode-btn" onclick="setMode('quantum')">⚛️ 양자 우선 (최고효율)</button>
-                    <button class="mode-btn" onclick="setMode('gpu')">🚀 GPU 가속 (고성능)</button>
-                    <button class="mode-btn" onclick="setMode('cpu')">⚡ CPU 멀티코어 (안정)</button>
-                    <button class="mode-btn" onclick="setMode('eco')">🌱 절전 모드 (친환경)</button>
+                    <button class="mode-btn active" onclick="setMode('hybrid', event)">🌈 하이브리드 (최적)</button>
+                    <button class="mode-btn" onclick="setMode('quantum', event)">⚛️ 양자 우선 (최고효율)</button>
+                    <button class="mode-btn" onclick="setMode('gpu', event)">🚀 GPU 가속 (고성능)</button>
+                    <button class="mode-btn" onclick="setMode('cpu', event)">⚡ CPU 멀티코어 (안정)</button>
+                    <button class="mode-btn" onclick="setMode('eco', event)">🌱 절전 모드 (친환경)</button>
                 </div>
             </div>
             
             <div class="control-section">
                 <h3>작업 유형</h3>
                 <div class="mode-buttons">
-                    <button class="mode-btn active" onclick="setTask('color')">🎨 컬러 생성</button>
-                    <button class="mode-btn" onclick="setTask('math')">🔢 수학 계산</button>
-                    <button class="mode-btn" onclick="setTask('optimization')">🎯 최적화</button>
-                    <button class="mode-btn" onclick="setTask('simulation')">🧪 시뮬레이션</button>
-                    <button class="mode-btn" onclick="setTask('ai')">🧠 AI 훈련</button>
+                    <button class="mode-btn active" onclick="setTask('color', event)">🎨 컬러 생성</button>
+                    <button class="mode-btn" onclick="setTask('math', event)">🔢 수학 계산</button>
+                    <button class="mode-btn" onclick="setTask('optimization', event)">🎯 최적화</button>
+                    <button class="mode-btn" onclick="setTask('simulation', event)">🧪 시뮬레이션</button>
+                    <button class="mode-btn" onclick="setTask('ai', event)">🧠 AI 훈련</button>
                 </div>
             </div>
             
@@ -456,7 +456,7 @@
             </div>
             
             <div class="action-buttons">
-                <button class="action-btn primary-btn" onclick="startComputing()">🚀 통합 컴퓨팅 실행</button>
+                <button class="action-btn primary-btn" onclick="startComputing(event)">🚀 통합 컴퓨팅 실행</button>
                 <button class="action-btn secondary-btn" onclick="autoOptimize()">🎯 자동 최적화</button>
                 <button class="action-btn secondary-btn" onclick="performanceTest()">📊 성능 테스트</button>
             </div>
@@ -655,7 +655,7 @@ setInterval(() => {
         }
 
         // 모드 설정
-        function setMode(mode) {
+        function setMode(mode, event) {
             currentMode = mode;
             
             // 버튼 활성화 상태 업데이트
@@ -689,7 +689,7 @@ setInterval(() => {
         }
 
         // 작업 유형 설정
-        function setTask(task) {
+        function setTask(task, event) {
             currentTask = task;
             
             // 버튼 활성화 상태 업데이트
@@ -745,7 +745,7 @@ setInterval(() => {
         }
 
         // 컴퓨팅 시작
-        function startComputing() {
+        function startComputing(event) {
             if (isComputing) {
                 stopComputing();
                 return;
